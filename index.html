@@ -495,27 +495,6 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 
 
 
-/* --- 증시캘린더 --------------------------------------------------------- */
-.calwk{margin:0 0 22px}
-.calwk h3{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
-  margin:0 0 8px; font-weight:600}
-.caltbl{width:100%; border-collapse:collapse; font-size:13px}
-.caltbl th{text-align:left; font-weight:600; font-size:11.5px; color:var(--ink-3);
-  padding:6px 10px; border-bottom:1px solid var(--rule); white-space:nowrap}
-.caltbl td{padding:8px 10px; border-bottom:1px solid var(--rule); vertical-align:top}
-.caltbl tr:hover td{background:var(--paper-2)}
-.calday{width:88px; white-space:nowrap; color:var(--ink-2); font-variant-numeric:tabular-nums}
-.calday.today{color:var(--dragon); font-weight:700}
-.calnum{width:82px; text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
-.calnum.hit{color:var(--rise); font-weight:600}
-.caltag{display:inline-block; font-size:10.5px; color:var(--ink-3); border:1px solid var(--rule-2);
-  border-radius:2px; padding:0 5px; margin-right:6px; vertical-align:1px}
-.calwhen{color:var(--ink-3); font-size:12px; white-space:nowrap}
-.calmajor{font-size:10.5px; color:var(--gold); border:1px solid var(--gold);
-  border-radius:2px; padding:0 4px; vertical-align:1px}
-.calempty{color:var(--ink-3); font-size:13px; padding:18px 10px}
-@media(max-width:700px){ .calnum{width:60px} .calday{width:66px} }
-
 .livechip{display:inline-block; font-size:10px; letter-spacing:.06em; padding:1px 5px;
   border:1px solid var(--vermilion); color:var(--vermilion); border-radius:2px;
   vertical-align:1px; margin-right:5px; cursor:help}
@@ -581,7 +560,6 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
     <button role="tab" aria-selected="false" data-tab="picks">매수 추천</button>
     <button role="tab" aria-selected="false" data-tab="backtest">백테스트</button>
     <span class="spacer"></span>
-    <button role="tab" aria-selected="false" data-tab="cal" id="tabcal" hidden>증시캘린더</button>
     <button role="tab" aria-selected="false" data-tab="board">자유게시판</button>
   </nav>
 
@@ -666,33 +644,6 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
       <div class="btlegend" id="btlegend"></div>
     </figure>
     <div class="scroll"><table class="bttab" id="bttab"></table></div>
-  </section>
-
-  <section id="p-cal" hidden>
-    <div class="band">
-      <div class="desc">경제지표·실적 발표 일정입니다. <b>토스증권</b>에서 받아옵니다.
-        값은 <b>발표 · 예측 · 이전</b> 순이며, 아직 발표 전이면 빈칸입니다.
-        <div class="ctrls">
-          <label class="divsel">종류
-            <select id="calkind">
-              <option value="">전체</option>
-              <option value="지표">경제지표</option>
-              <option value="실적">실적</option>
-              <option value="휴장">휴장</option>
-            </select>
-          </label>
-          <label class="divsel">지역
-            <select id="calctry">
-              <option value="">전체</option>
-              <option value="kr">국내</option>
-              <option value="us">해외</option>
-            </select>
-          </label>
-          <label class="chkbox" title="주요 종목 실적발표만 봅니다"><input type="checkbox" id="calmajor"><span>주요 실적만</span></label>
-        </div>
-      </div>
-    </div>
-    <div id="calbody"></div>
   </section>
 
   <section id="p-board" hidden>
@@ -2355,7 +2306,7 @@ document.querySelector('.tabs').addEventListener('click', function(e){
   document.querySelectorAll('.tabs [data-tab]').forEach(function(x){
     x.setAttribute('aria-selected', String(x===b));
   });
-  ['weights','uni','picks','backtest','cal','board'].forEach(function(id){
+  ['weights','uni','picks','backtest','board'].forEach(function(id){
     document.getElementById('p-'+id).hidden = (id !== b.dataset.tab);
   });
   setTimeout(mountVisibleCharts, 0);   // 탭이 보이게 된 뒤에야 차트 크기가 잡힌다
@@ -2374,10 +2325,6 @@ document.getElementById('picks').addEventListener('click', function(e){
   var tk = (head.querySelector('.meta span') || {}).textContent;
   if(tk && OPEN) OPEN[tk.trim()] = !open;
   if(!open) setTimeout(mountVisibleCharts, 0);      // 펼쳐진 뒤에야 크기가 생긴다
-});
-['calkind','calctry','calmajor'].forEach(function(id){
-  var el=document.getElementById(id);
-  if(el) el.addEventListener('change', renderCal);
 });
 initBoard();
 document.getElementById('nohold').addEventListener('change', function(){
@@ -2481,63 +2428,7 @@ function renderMarket(){
   host.innerHTML = html;
   host.hidden = false;
 }
-/* ---------- 증시캘린더 -------------------------------------------------- */
-function calWeekKey(d){
-  var y=+d.slice(0,4), m=+d.slice(4,6)-1, dd=+d.slice(6,8);
-  var t=new Date(y,m,dd), day=(t.getDay()+6)%7;      /* 월=0 */
-  t.setDate(t.getDate()-day);
-  return (t.getMonth()+1)+'월 '+(Math.floor((t.getDate()-1)/7)+1)+'주차';
-}
-function calDayLabel(d){
-  var y=+d.slice(0,4), m=+d.slice(4,6)-1, dd=+d.slice(6,8);
-  var W=['월','화','수','목','금','토','일'][(new Date(y,m,dd).getDay()+6)%7];
-  return (m+1)+'.'+dd+' ('+W+')';
-}
-function renderCal(){
-  var host=document.getElementById('calbody'), tab=document.getElementById('tabcal');
-  if(!host) return;
-  var C=DATA.calendar;
-  if(!C || !C.events || !C.events.length){ if(tab) tab.hidden=true; return; }
-  if(tab) tab.hidden=false;
-  var fk=(document.getElementById('calkind')||{}).value||'';
-  var fc=(document.getElementById('calctry')||{}).value||'';
-  var fm=!!(document.getElementById('calmajor')||{}).checked;
-  var today=new Date(), t8=today.getFullYear()+
-    String(today.getMonth()+1).padStart(2,'0')+String(today.getDate()).padStart(2,'0');
-  var wk={}, order=[];
-  C.events.filter(function(e){
-    if(fk && e.kind !== fk) return false;
-    if(fc && e.country !== fc) return false;
-    if(fm && e.kind === '실적' && !e.major) return false;
-    return true;
-  }).forEach(function(e){
-    var k=calWeekKey(e.date);
-    if(!wk[k]){ wk[k]=[]; order.push(k); }
-    wk[k].push(e);
-  });
-  var html='';
-  order.forEach(function(k){
-    var rows=wk[k].map(function(e){
-      var num=function(v,hit){ return '<td class="calnum'+(hit?' hit':'')+'">'+esc(v||'')+'</td>'; };
-      return '<tr>'+
-        '<td class="calday'+(e.date===t8?' today':'')+'">'+esc(calDayLabel(e.date))+'</td>'+
-        '<td'+(e.note?' title="'+esc(e.note)+'"':'')+'>'+
-          (e.country?'<span class="caltag">'+(e.country==='kr'?'국내':'해외')+'</span>':'')+
-          (e.kind?'<span class="caltag">'+esc(e.kind)+'</span>':'')+
-          (e.metric?'<span class="caltag">'+esc(e.metric)+'</span>':'')+esc(e.title)+
-          (e.major?' <span class="calmajor">주요</span>':'')+
-          (e.when?' <span class="calwhen">'+esc(e.when)+'</span>':'')+'</td>'+
-        num(e.actual, !!e.actual)+num(e.fore)+num(e.prev)+'</tr>';
-    }).join('');
-    html+='<div class="calwk"><h3>'+esc(k)+'</h3><table class="caltbl">'+
-      '<thead><tr><th class="calday">날짜</th><th>일정</th>'+
-      '<th class="calnum">발표</th><th class="calnum">예측</th><th class="calnum">이전</th>'+
-      '</tr></thead><tbody>'+rows+'</tbody></table></div>';
-  });
-  host.innerHTML = html || '<p class="calempty">표시할 일정이 없습니다.</p>';
-}
 renderMarket();
-renderCal();
 document.getElementById('asof').textContent = (DATA.as_of||'').replace(/(\d{4})(\d{2})(\d{2})/,'$1.$2.$3');
 if(DATA.intraday){
   /* 장중 실행 — 오늘 봉이 확정되지 않았다는 걸 숨기지 않는다 */
