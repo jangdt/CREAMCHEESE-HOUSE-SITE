@@ -82,9 +82,11 @@ body{
 }
 .sigil b{font-size:20px; font-weight:800; letter-spacing:.02em; line-height:1.24; color:var(--ink);
   white-space:nowrap}
+.mast .title{flex:1 1 320px; align-self:center; display:flex; flex-direction:column; gap:6px}
+.mast .tagline{margin:0; font-size:13.5px; line-height:1.5; color:var(--ink-2); word-break:keep-all}
 .mast h1{
-  font-family:"Nanum Myeongjo",serif; font-weight:800; margin:0; align-self:center;
-  font-size:clamp(28px,4.6vw,46px); letter-spacing:-.01em; text-wrap:balance; flex:1 1 320px;
+  font-family:"Nanum Myeongjo",serif; font-weight:800; margin:0;
+  font-size:clamp(28px,4.6vw,46px); letter-spacing:-.01em; text-wrap:balance;
 }
 .stamp{align-self:center; text-align:right; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); line-height:1.7}
 .stamp b{color:var(--dragon); font-weight:600}
@@ -670,7 +672,10 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 <div class="wrap">
   <header class="mast">
     <div class="sigil"><b>CREAMCHEESE<br>HOUSE</b></div>
-    <h1>오늘 최고의 종목 5</h1>
+    <div class="title">
+      <h1>오늘 최고의 종목 5</h1>
+      <p class="tagline">최고 수익이 아니라, 매일 150종목을 대신 훑어 살펴볼 가치가 있는 5개 종목과 그 이유를 제시한다.</p>
+    </div>
     <div class="stamp">
       기준일 <b id="asof">—</b><br>
       산출 <span id="genat">—</span><br>
