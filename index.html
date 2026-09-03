@@ -719,7 +719,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 
   <nav class="tabs" role="tablist">
     <button role="tab" aria-selected="false" data-tab="signal">시장 신호</button>
-    <button role="tab" aria-selected="false" data-tab="weights">산정 기준</button>
+    <button role="tab" aria-selected="false" data-tab="weights">투자 전략</button>
     <button role="tab" aria-selected="false" data-tab="uni">대상 종목</button>
     <button role="tab" aria-selected="true" data-tab="picks">매수 추천</button>
     <button role="tab" aria-selected="false" data-tab="backtest">백테스트</button>
@@ -840,7 +840,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 
   <section id="p-uni" hidden>
     <div class="band">
-      <div class="desc">전날 종가 <b>시가총액 상위</b> 순. 우선주·스팩·리츠는 제외했습니다. 강조된 종목은 산정 기준으로 <b>선별된 20종목</b>입니다.</div>
+      <div class="desc">전날 종가 <b>시가총액 상위</b> 순. 우선주·스팩·리츠는 제외했습니다. 강조된 종목은 투자 전략으로 <b>선별된 20종목</b>입니다.</div>
     </div>
     <div id="unis"></div>
   </section>
@@ -4192,7 +4192,7 @@ function renderBT(){
   if(PAN && PANOLD){
     host.innerHTML='';
     document.getElementById('btnote').innerHTML =
-      '<b>백테스트 패널이 지금 산정 기준보다 낡았습니다.</b> 이 패널에는 ' +
+      '<b>백테스트 패널이 지금 투자 전략보다 낡았습니다.</b> 이 패널에는 ' +
       PANOLD.map(esc).join(', ') + ' 항목이 없어, 슬라이더를 움직여도 ' +
       '그 항목은 백테스트에 반영되지 않습니다. 잘못된 성적을 보여 주지 않으려고 ' +
       '채점을 멈췄습니다. <code>run.bat</code> 을 한 번 더 실행하면 패널이 다시 만들어집니다.';
