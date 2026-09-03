@@ -4058,7 +4058,9 @@ function hzStatsOf(name){
       if(off + d.step + 1 > to) return;
       var A = simulate(off, to, d.step, d.n, lim, 0.3, 'hold', d.fill);
       var pk = [];
-      A.periods.forEach(function(p){ p.picks.forEach(function(x){ if(x.filled) pk.push({r:x.r, u:p.uni}); }); });
+      /* 초과승률의 기준은 **소속시장** 동일가중(x.u) — 백테스트 탭 periodStats 와 같은 정의.
+         (09-03 외부 감사 F10: 여기만 전체 유니버스 p.uni 를 써서 같은 조건에서 49.7% vs 50.3% 로 갈렸다) */
+      A.periods.forEach(function(p){ p.picks.forEach(function(x){ if(x.filled) pk.push({r:x.r, u:x.u}); }); });
       var ex = A.periods.map(function(p){ return p.ex; });
       if(!pk.length || !ex.length) return;
       runs.push({hit: 100*pk.filter(function(x){ return x.r > 0; }).length/pk.length,
