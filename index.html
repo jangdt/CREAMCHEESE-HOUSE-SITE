@@ -305,7 +305,9 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .preset{display:flex; gap:7px; flex-wrap:wrap}
 
 /* ---------- 보유 기간 고르기 ---------- */
-.hzwrap{margin:20px 0 48px; border:1px solid var(--rule-2); border-radius:4px; overflow:hidden}   /* 설명문을 뺀 만큼 아래 여백을 표에 준다 */
+.hzwrap{margin:8px 0 48px; border:1px solid var(--rule-2); border-radius:4px; overflow:hidden}   /* 설명문을 뺀 만큼 아래 여백을 표에 준다 */
+.hzspan{margin:18px 2px 0; font-size:12px; color:var(--ink-3); font-variant-numeric:tabular-nums}   /* 2026-09-05 사용자: 성적표가 어느 창의 실측인지 한 줄 */
+.hzspan b{color:var(--ink-2); font-weight:600}
 .hzlist{display:flex; flex-direction:column}
 /* 머리글은 성적표 네 칸의 이름을 댄다.
    .hz 와 같은 격자를 그대로 쓰되 버튼이 아니라 설명 줄이다.
@@ -626,6 +628,8 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .bcform input:focus{outline:2px solid var(--dragon); outline-offset:1px; border-color:var(--dragon)}
 .brow{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
 .bwho{font-size:11.5px; color:var(--ink-3); margin-left:auto}
+.bvisits{font-size:11.5px; color:var(--ink-3); margin:0 0 6px; font-variant-numeric:tabular-nums}
+.bvisits b{color:var(--ink-2); font-weight:600}
 .bsel{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-3)}
 .bend{justify-content:flex-end}
 .bmsg{flex:1; font-size:12.5px; color:var(--ink-3); min-height:1.3em; padding:8px 18px}
@@ -783,6 +787,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
   </section>
 
   <section id="p-weights" hidden>
+    <p class="hzspan" id="hzspan"></p>
     <div class="hzwrap">
       <div class="hzhead" aria-hidden="true">
         <span class="c1">기간</span>
@@ -974,7 +979,7 @@ var PRESETS = {
          perf:{gpm:12, opm:12, rev:13, op:17, revq:12, opq:14, niown:11, fcf:9}}
   },
   long: {         /* 전략 2 · 장기 투자 60거래일(3~6개월) — 2026-09-03 사용자: "실적에 최고 배점, 그 다음 가치. ICT·수급은 참고".
-                     문턱(FUNNEL.long): 직전 4분기 매출 YoY 증가 · 직전 2분기 영업이익 YoY 증가 · 흑자 · 12개월 RS ≥ 70(밸류 트랩 방어) · 지주 제외.
+                     문턱(FUNNEL.long): 직전 4분기 매출 YoY 증가 · 직전 2분기 영업이익 YoY 증가 · 흑자 · 12개월 RS ≥ 70(밸류 트랩 방어) · 60일 +50% 급등 제외 · 지주 제외.
                      점수: 실적 300(영업이익 40 · FCF 20 · 매출총이익률 15 · 영업이익률 15 · 매출 10) · 밸류 200(PER 25 · EV/EBIT 25 · PSR 20 · PBR 15 · ROIC 15).
                      3년 패널 실측: 실적 60·밸류 40 이 밸류 우위(40·60: 후반 초과 −524bp)보다 낫고 70·30 과는 비슷 → 사용자 요구대로 실적 우위 유지. */
     max:{ict:0, supply:0, close:0, value:200, perf:300},
@@ -1914,11 +1919,16 @@ var FUNNEL = {month:{rs:60, ict:30, cs:30},
                  선택 구간 65.7%·+1,325 → 69.0%·+1,703(최악 조각 63.9%·+1,696), **검증 구간 53.6%·+626 → 57.5%·+821** — 양쪽 다 개선.
                  3년 전체 65.9%·+1,225 → 69.5%·+1,482, 연도별 초과 2023 +304 · 2024 +2,448 · 2025 +1,378 · 2026 +765 로 전부 양.
                  대가는 MDD −27% → −36% 와 통과 종목 14.9 → 12.3개(최소 8). 80 은 통과 9개로 얇고 성적도 꺾인다. */
-              long:{grow:true, g_rev:100, g_op:100, op_pos:true, rs12:70}};
+              /* 2026-09-05 r60:50 추가 — 직전 60거래일 수익이 +50% 를 넘는 종목은 후보에서 뺀다(못 재면 통과). 검증 구간(2025-09~)
+                 선정이 60일 +40~110% 급등한 주도주에 몰려 2026-04~07 조정에서 시장보다 더 빠졌다(초과승률 44%). 3년 실측:
+                 선택 승률 73→78·초과승률 65→71, 검증 57→63·44→52, 하락 창 19→42. 문턱 30~80 어디서나 검증 49~52 로 둔감.
+                 대가: 상승장에서 이미 오른 주도주(하이닉스 등)를 놓친다. 사용자 결정: 차기 주도주를 초기에 잡는 쪽을 우선.
+                 통과 종목이 하루 평균 12.3 → 8.8개, 3년 중 3.5% 의 날은 3개 미만(빈 자리 = 현금, 설계대로). */
+              long:{grow:true, g_rev:100, g_op:100, op_pos:true, rs12:70, r60:50}};
 var STAGE_W = {ict:{bias:34, zone:33, rr:33},
                close:{clv:18, tail:12, rvol:24, vtrend:12, brk:20, hi:14},
                supply:{smart:50, persist:33, program:17}};
-var FUNNEL_KO = {rs:'RS 하위', ict:'ICT 진입점 하위', close:'마감 품질 하위', supply:'수급 하위', grow:'성장 미달', rs12:'12개월 RS 하위', hold:'지주회사'};
+var FUNNEL_KO = {rs:'RS 하위', ict:'ICT 진입점 하위', close:'마감 품질 하위', supply:'수급 하위', grow:'성장 미달', rs12:'12개월 RS 하위', hold:'지주회사', surge60:'60일 급등'};
 /* 라이브: 통과하면 null, 아니면 {stage, v} (v = 그 단계 점수 0~100 또는 null) */
 /* 장기 투자 문턱 — 라이브(st.s_extra)와 패널(leafAt) 이 같은 식을 쓴다. 값이 없으면 미달. */
 function growFail(f, x){
@@ -1931,7 +1941,22 @@ function growFail(f, x){
     if(f.op_pos && (op === null || op < 100)) return {stage:'grow', v:op, why:(op === null ? '흑자 여부 ?' : '적자')};
   }
   if(f.rs12 && (r12 === null || r12 < f.rs12)) return {stage:'rs12', v:r12};
+  var r60 = num(x.r60);
+  if(f.r60 && r60 !== null && r60 > f.r60) return {stage:'surge60', v:r60};     /* 못 재면 통과 */
   return null;
+}
+/* 직전 60거래일 수익률(%) — 라이브는 hist(130일 종가), 패널은 px. 61봉이 안 되면 null */
+function r60Of(st){
+  var h = st && st.hist;
+  if(!h || h.length < 61) return null;
+  var a = +h[h.length-61][1], b = +h[h.length-1][1];
+  return (a > 0 && b > 0) ? (b / a - 1) * 100 : null;
+}
+function panelR60(t, di){
+  var px = PAN.px[t], ix = PXI[t] ? PXI[t][PAN.dates[di]] : undefined;
+  if(!px || ix === undefined || ix < 60) return null;
+  var a = px.c[ix-60], b = px.c[ix];
+  return (a > 0 && b > 0) ? (b / a - 1) * 100 : null;
 }
 function growTxt(x){
   x = x || {};
@@ -1944,7 +1969,7 @@ function funnelFail(st){
   var f = FUNNEL[MODE];
   if(!f || !st) return null;
   if(f.grow){
-    var gf = growFail(f, st.s_extra);
+    var gf = growFail(f, Object.assign({}, st.s_extra || {}, {r60: r60Of(st)}));
     if(gf) return gf;
     var hd = st.holding && st.holding.penalty;
     if(hd !== undefined && hd !== null && hd < 1) return {stage:'hold', v:null};
@@ -1999,6 +2024,7 @@ function funnelTxt(ff){
   if(!ff) return '';
   if(ff.stage === 'grow') return FUNNEL_KO.grow + ' · ' + ff.why;
   if(ff.stage === 'hold') return FUNNEL_KO.hold;
+  if(ff.stage === 'surge60') return FUNNEL_KO.surge60 + ' +' + Math.round(ff.v) + '%';
   return FUNNEL_KO[ff.stage] + (ff.v === null || ff.v === undefined ? ' (못 잼)' : ' ' + Math.round(ff.v) + '점');
 }
 var SURGE_LO = 0.10, SURGE_HI = 0.25;
@@ -2072,6 +2098,8 @@ function diversify(rows, want, topN){
       continue;
     }
     seen[s] = (seen[s]||0)+1;
+    /* 후보 자리가 찬 뒤의 종목도 깔때기·문턱은 표시용으로 잰다 — 안 재면 4~10위는 흐리고 11위부터 멀쩡해 보인다 (09-05 사용자 지적) */
+    if(FUNNEL[MODE]) rows[i].funnel = funnelFail(st);
     rest.push(rows[i]);
   }
   /* 후보 뒤에 신호 제외 종목을 채워 앞 topN 자리를 만들고, 남은 건 전부 점수순 */
@@ -2204,7 +2232,7 @@ function warnChips(row, i){
   /* 후보 자리에서 걸린 종목은 row.funnel 에 사유가 있다. 4~5위(참고)는 자리 검사를 안 거쳤으므로 표시용으로 한 번 더 잰다 */
   var ff = row.funnel || ((FUNNEL[MODE] && !row.cand && i < PICK_TOP) ? funnelFail(st) : null);
   if(ff) out.push('<span class="chip funnel" title="'+(FUNNEL[MODE] && FUNNEL[MODE].grow
-      ? '장기 투자 문턱 — 직전 4분기 매출·직전 2분기 영업이익이 전년 동기보다 늘고 흑자, 12개월 RS 백분위 70 이상, 지주회사 제외. 이 종목은 '
+      ? '장기 투자 문턱 — 직전 4분기 매출·직전 2분기 영업이익이 전년 동기보다 늘고 흑자, 12개월 RS 백분위 70 이상, 직전 60일 +50% 급등 제외(이미 오른 주도주는 조정에서 더 빠진다), 지주회사 제외. 이 종목은 '
       : '중기 스윙 깔때기 — RS 백분위 60 미만, ICT 진입점 30 미만, 마감 품질·수급 30 미만은 후보에서 뺍니다 (나쁜 것을 거르는 문턱). 이 종목은 ')
       +esc(funnelTxt(ff))+' 에서 걸렸습니다">'+(FUNNEL[MODE] && FUNNEL[MODE].grow ? '문턱 제외 · ' : '깔때기 제외 · ')+esc(funnelTxt(ff))+'</span>');
   if(kind === 'limit') out.push('<span class="chip limit" title="당일 +25% 이상 — 상한가권. 밤사이 표본이 적어 후보에서 빼지는 않지만, 애프터장 체결가가 종가보다 높을 수 있습니다">상한가권 '+pc(mv*100)+'</span>');
@@ -2301,7 +2329,7 @@ function roleTxt(cid){
   var f = FUNNEL[MODE];
   if(f && f.grow){                          /* 장기 투자: 문턱은 실적(성장 플래그)·밸류(12개월 RS) 카드 머리에 한 줄만 */
     if(cid === 'perf') return '<b>문턱</b> — 직전 4분기 매출 · 직전 2분기 영업이익이 전년 동기보다 증가 · 흑자 · 지주회사 제외';
-    if(cid === 'value') return '<b>문턱</b> — 12개월 RS 백분위 '+f.rs12+' 이상';
+    if(cid === 'value') return '<b>문턱</b> — 12개월 RS 백분위 '+f.rs12+' 이상'+(f.r60 ? ' · 직전 60일 +'+f.r60+'% 급등 제외' : '');
     return '';
   }
   if(W.max[cid]) return '';                 /* 밸류는 배점이 있는 축 — RS 문턱은 카드(점수 구성)에서만 보인다 */
@@ -2493,7 +2521,8 @@ function panelFunnelFail(t, di){
   var f = FUNNEL[MODE];
   if(!f) return null;
   if(f.grow){
-    var gf = growFail(f, {g_rev:leafAt(t, di, 'g_rev'), g_op:leafAt(t, di, 'g_op'), op_pos:leafAt(t, di, 'op_pos'), rs12:leafAt(t, di, 'rs12')});
+    var gf = growFail(f, {g_rev:leafAt(t, di, 'g_rev'), g_op:leafAt(t, di, 'g_op'), op_pos:leafAt(t, di, 'op_pos'), rs12:leafAt(t, di, 'rs12'),
+                          r60:panelR60(t, di)});
     if(gf) return gf.stage;
     var hd = PAN.meta[t] && PAN.meta[t].hold;
     if(hd !== undefined && hd !== null && hd < 1) return 'hold';
@@ -3165,6 +3194,9 @@ var BCATS = [
 
 var SB = null;                  // supabase 클라이언트
 var ME = null;                  // {id, name, admin}
+var VTOK = null;                // 로그인 세션 토큰 (방문 기록에 user_id 를 남기려고)
+var VSENT = false;              // 이 화면의 방문 기록을 보냈는지
+var VSTAT = null;               // 관리자에게만: 최근 7일 방문 요약
 var BOARD = {posts:[]};
 var MINE = {post:{}, cmt:{}};   // 내가 누른 추천 (두 번 누르면 취소)
 var CANWRITE = null;            // null=확인 중, false=쓸 수 없음, true=쓸 수 있음
@@ -3260,6 +3292,7 @@ async function setMe(u){
   ME = {id:u.id, name:name, admin:admin};
   CANWRITE = true;
   await loadMine();
+  await loadVisits();
   markMine();
 }
 function markMine(){
@@ -3306,11 +3339,13 @@ async function loadCmts(pid){
 }
 async function boardBoot(){
   if(!SUPA){ BSTATE = 'offline'; CANWRITE = false; settle(); renderBoard(); return; }
+  armVisit();                     // SDK 가 막혀도 방문은 남긴다 (fetch 만 쓴다)
   try{
     await loadSDK();
     SB = window.supabase.createClient(SUPA.url, SUPA.key,
       {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}});
     var g = await SB.auth.getSession();
+    VTOK = (g.data && g.data.session && g.data.session.access_token) || null;
     await setMe(g.data && g.data.session && g.data.session.user);
     /* 설정 읽기를 게시판 로드보다 먼저 건다. 게시판 로드가 실패해 catch 로 빠지면
        계정 설정을 못 읽은 채로 잠금이 풀려 내 설정이 덮어써진다. */
@@ -3320,6 +3355,7 @@ async function boardBoot(){
     markMine();
     BSTATE = 'ready';
     SB.auth.onAuthStateChange(function(_e, sess){
+      VTOK = (sess && sess.access_token) || null;
       setMe(sess && sess.user).then(function(){
         renderBoard();
         /* supabase 는 붙자마자 INITIAL_SESSION 으로 지금 세션을 한 번 더 알려 준다.
@@ -3512,6 +3548,79 @@ function bumpView(id){
   }, function(e){ if(window.console) console.warn('[board] 조회수:', e); });
 }
 
+/* ---------- 방문 기록 ----------
+   웹에 올린 사본(LAZY)만. 화면을 떠날 때(숨김·pagehide) 또는 6초 뒤, 둘 중 먼저 오는 쪽에서 한 번.
+   남기는 것: 익명 id(브라우저마다 그날 하나, localStorage 무작위) · 브라우저가 잰 전송량 · 기기 · 유입 호스트,
+   로그인했으면 user_id. Supabase 의 log_visit() 만 부를 수 있고 읽기는 관리자뿐이다.
+   로컬 사본(file:)은 남기지 않는다 — 내가 여는 건 방문이 아니다. */
+function visitSid(){
+  var day = kstDay(), v = null, m;
+  try{ v = localStorage.getItem('ccsid'); }catch(e){}
+  m = v && /^(\d{4}-\d{2}-\d{2})\.([a-z0-9]{16})$/.exec(v);
+  if(m && m[1] === day) return m[2];             // 같은 브라우저·같은 날 = 같은 방문자
+  var abc = 'abcdefghijklmnopqrstuvwxyz0123456789', a = new Uint8Array(16), i, id = '';
+  try{ crypto.getRandomValues(a); }catch(e){ for(i=0;i<16;i++) a[i] = Math.floor(Math.random()*256); }
+  for(i=0;i<16;i++) id += abc[a[i] % abc.length];
+  try{ localStorage.setItem('ccsid', day + '.' + id); }catch(e){}
+  return id;
+}
+function visitBytes(){
+  var n = 0;
+  try{
+    performance.getEntriesByType('navigation').concat(performance.getEntriesByType('resource'))
+      .forEach(function(e){ n += Number(e.transferSize) || 0; });
+  }catch(e){}
+  return n;
+}
+function visitInfo(){
+  var dev = 'desktop', ref = null;
+  try{ if(window.matchMedia('(pointer:coarse)').matches || window.innerWidth < 720) dev = 'mobile'; }catch(e){}
+  try{
+    var h = document.referrer ? new URL(document.referrer).hostname : '';
+    if(h && h !== location.hostname) ref = h.slice(0, 80);
+  }catch(e){}
+  return {p_sid: visitSid(), p_bytes: visitBytes(), p_device: dev, p_ref: ref};
+}
+function logVisit(){
+  if(VSENT) return;
+  VSENT = true;
+  try{
+    fetch(SUPA.url + '/rest/v1/rpc/log_visit', {
+      method: 'POST', keepalive: true,
+      headers: {apikey: SUPA.key, Authorization: 'Bearer ' + (VTOK || SUPA.key), 'Content-Type': 'application/json'},
+      body: JSON.stringify(visitInfo())
+    }).catch(function(){});
+  }catch(e){}
+}
+function armVisit(){
+  if(!LAZY || !SUPA || location.protocol === 'file:') return;
+  document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') logVisit(); });
+  window.addEventListener('pagehide', logVisit);
+  setTimeout(logVisit, 6000);
+}
+async function loadVisits(){
+  VSTAT = null;
+  if(!(ME && ME.admin && SB)) return;
+  try{
+    var r = await SB.from('visits_daily').select('day,sessions,views,bytes,mobile')
+      .order('day', {ascending:false}).limit(7);
+    if(r.data) VSTAT = r.data;
+  }catch(e){}
+}
+function kstDay(){ return new Date(Date.now() + 9*3600e3).toISOString().slice(0, 10); }
+function bVisitsHTML(){
+  if(!(ME && ME.admin && VSTAT)) return '';
+  var today = kstDay(), t = null, w = {sessions:0, views:0, bytes:0, mobile:0};
+  VSTAT.forEach(function(d){
+    if(d.day === today) t = d;
+    w.sessions += +d.sessions || 0; w.views += +d.views || 0; w.bytes += +d.bytes || 0; w.mobile += +d.mobile || 0;
+  });
+  var mb = (w.bytes / 1048576).toFixed(1);
+  var mob = w.sessions ? Math.round(100 * w.mobile / w.sessions) : 0;
+  return '<p class="bvisits">방문 · 오늘 <b>'+((t && +t.sessions) || 0)+'</b>명 · 조회 '+((t && +t.views) || 0)+
+    ' · 7일 <b>'+w.sessions+'</b>명 · 전송 약 '+mb+' MB · 모바일 '+mob+'%</p>';
+}
+
 /* ---------- 그리기 ---------- */
 function bLoginHTML(){
   if(BSTATE === 'offline') return '<p class="bempty bro">이 사본은 바깥으로 아무 요청도 하지 않습니다. '+
@@ -3539,7 +3648,7 @@ function bListHTML(){
   }).join('') : (BSTATE==='ready'
       ? '<p class="bempty">'+(BFILTER?'이 분류에는 아직 글이 없습니다.':'아직 글이 없습니다. 첫 글을 남겨 주세요.')+'</p>'
       : '');
-  return '<div class="btab">'+head+body+'</div>' + bLoginHTML() + bFormHTML();
+  return bVisitsHTML() + '<div class="btab">'+head+body+'</div>' + bLoginHTML() + bFormHTML();
 }
 function bFormHTML(){
   if(!CANWRITE || !ME) return '';
@@ -4086,7 +4195,15 @@ function hzCell(k, r){
   if(k === 'ex') return {txt: (v >= 0 ? '+' : '−')+Math.abs(Math.round(v))+'<em>bp'+(HZ_UNIT[r.step] || '')+'</em>', cls: v >= 0 ? 'pos' : 'neg'};
   return {txt: v.toFixed(1)+'<em>%</em>', cls:''};
 }
+/* 성적표 위 한 줄 — 어느 창의 실측인가 (창이 하루 밀리면 20일·60일 구간 경계가 다 옮겨져 숫자가 몇 pp 흔들린다) */
+function hzSpanText(){
+  if(!PAN || !PAN.dates || !PAN.dates.length) return '백테스트 패널을 받은 뒤 채워집니다';
+  var d = PAN.dates, f = function(x){ return x.slice(0,4)+'-'+x.slice(4,6)+'-'+x.slice(6,8); };
+  return '실측 기간 <b>'+f(d[0])+' ~ '+f(d[d.length-1])+'</b> · 최근 '+d.length+'거래일'+(PANOLD ? ' · 패널이 낡았습니다' : '');
+}
 function renderHzStats(){
+  var span = document.getElementById('hzspan');
+  if(span) span.innerHTML = hzSpanText();
   var cells = document.querySelectorAll('.hzs[data-hz]');
   if(!cells.length) return;
   function setCls(el, add){ el.className = el.className.replace(/\b(pos|neg|wait)\b/g, '').replace(/\s+/g, ' ').trim() + (add ? ' '+add : ''); }
