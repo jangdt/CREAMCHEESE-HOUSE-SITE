@@ -604,7 +604,11 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .lv .up{color:var(--rise)} .lv .dn{color:var(--fall)}
 .lights.live .tl .box{border-style:dashed}
 .lights.live .tl b{color:var(--ink-3)}
-.lights.live .stamp{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); display:inline-flex; gap:12px; flex-wrap:wrap}
+/* 신호등 세 개는 한 줄에 고정, 실시간 요약은 그 오른쪽 남은 폭 안에서만 줄을 바꾼다 —
+   코스닥처럼 확정값이 붙어 길어져도 요약이 통째로 아래 줄로 내려가지 않는다 (09-10 저녁 사용자) */
+.lights.live{flex-wrap:nowrap}
+.lights.live .stamp{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); display:inline-flex; gap:4px 12px; flex-wrap:wrap; flex:1 1 0; min-width:0; line-height:1.5}
+@media(max-width:760px){ .lights.live{flex-wrap:wrap} .lights.live .stamp{flex-basis:100%} }
 .lights.live .stamp b{color:var(--ink-2); font-weight:600}
 .lights.live .stamp .fx{color:var(--ink-3); border-left:1px solid var(--rule-2); padding-left:12px}
 .u .lvu{display:inline-flex; align-items:center; gap:5px; flex:none}
