@@ -186,34 +186,43 @@ body{
 .plan .n{font-size:11.5px; color:var(--ink-3); margin-top:6px}
 .plan .rr{background:var(--paper)}
 .plan .rr .v{font-size:21px}
-.v.buy{color:var(--dragon)} .v.tgt{color:var(--rise)} .v.cut{color:var(--fall)}
+/* 09-10 사용자: 매수가 회색 · 목표가 초록 · 손절가 빨강 */
+.v.buy{color:var(--ink-2)} .v.tgt{color:var(--green)} .v.cut{color:var(--rise)}
 @media(max-width:760px){
   .bars{grid-template-columns:repeat(2,1fr); gap:12px 18px}
   .plan{grid-template-columns:repeat(2,1fr)}
 }
 
-.grade{display:flex; align-items:baseline; gap:12px; padding:10px 20px; border-top:1px solid var(--rule);
-  border-left:3px solid; font-size:12.5px; flex-wrap:wrap}
-.grade b{font-family:"IBM Plex Mono",monospace; font-size:13px; letter-spacing:.02em; white-space:nowrap}
-.grade span{color:var(--ink-2)}
+/* 진입 등급 — 카드에서 가장 먼저 읽을 한 줄 (09-10 사용자: 중요하니 더 크게) */
+.grade{display:flex; align-items:baseline; gap:14px; padding:14px 20px; border-top:1px solid var(--rule);
+  border-left:4px solid; font-size:15px; flex-wrap:wrap}
+.grade b{font-family:"IBM Plex Mono",monospace; font-size:18px; font-weight:700; letter-spacing:.02em; white-space:nowrap}
+.grade span{color:var(--ink); font-weight:500}
 .grade.gA{border-left-color:var(--dragon); background:color-mix(in srgb, var(--dragon) 8%, var(--card))}
 .grade.gA b{color:var(--dragon)}
 .grade.gB{border-left-color:var(--gold); background:color-mix(in srgb, var(--gold) 8%, var(--card))}
 .grade.gB b{color:var(--gold)}
 .grade.gC{border-left-color:var(--rule-2)} .grade.gC b{color:var(--ink-2)}
-.grade.gD{border-left-color:var(--fall); background:color-mix(in srgb, var(--fall) 8%, var(--card))}
-.grade.gD b{color:var(--fall)}
+.grade.gD{border-left-color:var(--rise); background:color-mix(in srgb, var(--rise) 8%, var(--card))}
+.grade.gD b{color:var(--rise)}
 /* 산정 이유 — 항목마다 '점수 구성·매매 계획' 과 같은 띠 머리(seclab) + 위 경계선. 문단 구분이 안 보인다는 지적(09-10) */
 .why{padding:0}
 .why section{border-top:1px solid var(--rule-2); padding:0 20px 18px; margin-top:6px}
 .why section:first-child{margin-top:0}
 .why h4{
   margin:0 -20px 12px; padding:11px 16px 9px; background:var(--paper); border-bottom:1px solid var(--rule);
-  font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-2); font-weight:700;
-  display:flex; align-items:baseline; gap:10px;
+  font-size:14px; letter-spacing:.06em; color:var(--ink); font-weight:700;
+  display:flex; align-items:center; gap:12px;
 }
 .why h4 i{font-style:normal}
-.why h4 em{font-style:normal; font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:500; color:var(--ink-3); letter-spacing:0; font-variant-numeric:tabular-nums}
+.why h4{cursor:pointer; user-select:none}
+.why h4 .ws-x{margin-left:auto; appearance:none; cursor:pointer; font:inherit; font-size:15px; line-height:1;
+  width:24px; height:24px; border:1px solid var(--rule-2); border-radius:3px; background:var(--card); color:var(--ink-3)}
+.why h4:hover .ws-x{color:var(--ink)}
+.why section.closed h4{margin-bottom:0; border-bottom:0}
+.why section.closed{padding-bottom:0}
+.why h4 .ws-x[aria-expanded="true"]{color:var(--dragon); border-color:var(--dragon)}
+.why h4 em{font-style:normal; font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:500; color:var(--ink-3); letter-spacing:0; font-variant-numeric:tabular-nums}
 .why p{margin:0 0 8px; font-size:13.5px; color:var(--ink-2); max-width:74ch}
 .why p em{font-style:normal; color:var(--ink); font-weight:500}
 .why .num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
@@ -2052,6 +2061,7 @@ function planRow(st, p){
 }
 function whyBlock(row){
   var st = row.st, p = st.plan || {};
+  var WSEC = whyBlock.open || (whyBlock.open = {});   /* 산정 이유 항목별 펼침 상태 — "티커:항목". 기본은 접힘 (09-10 사용자) */
   return (p.grade ? '<div class="grade g'+p.grade+'"><b>진입 등급 '+p.grade+'</b><span>'+
       esc(GRADE_TXT[p.grade] || p.grade_why || '')+'</span></div>' : '')+
     '<div class="why">'+
@@ -2060,8 +2070,11 @@ function whyBlock(row){
        ['마감 품질', pctTxt(row.pcts.close), reasonClose(st)],
        ['밸류', pctTxt(row.pcts.value), reasonValue(st)],
        ['실적', pctTxt(row.pcts.perf), reasonPerf(st)],
-       ['리스크 점검', '', reasonRisk(row)]].map(function(x){
-        return '<section><h4><i>'+x[0]+'</i>'+(x[1] ? '<em>'+x[1]+'</em>' : '')+'</h4>'+(x[2] || '<p class="dim">자료 없음</p>')+'</section>';
+       ['리스크 점검', '', reasonRisk(row)]].map(function(x, k){
+        var key = st.ticker+':'+k, op = !!WSEC[key];
+        return '<section class="wsec'+(op ? '' : ' closed')+'" data-ws="'+key+'"><h4><i>'+x[0]+'</i>'+(x[1] ? '<em>'+x[1]+'</em>' : '')+
+          '<button class="ws-x" type="button" aria-expanded="'+op+'" aria-label="'+x[0]+' '+(op ? '접기' : '펼치기')+'">'+(op ? '－' : '＋')+'</button></h4>'+
+          '<div class="ws-body"'+(op ? '' : ' hidden')+'>'+(x[2] || '<p class="dim">자료 없음</p>')+'</div></section>';
       }).join('')+
     '</div>';
 }
@@ -4389,6 +4402,17 @@ document.querySelector('.tabs').addEventListener('click', function(e){
   }
 });
 document.getElementById('picks').addEventListener('click', function(e){
+  var wh = e.target.closest('.wsec > h4');
+  if(wh){
+    var sec = wh.parentNode, wb = sec.querySelector('.ws-body'), wx = wh.querySelector('.ws-x');
+    var wopen = !sec.classList.contains('closed');
+    sec.classList.toggle('closed', wopen);
+    if(wb) wb.hidden = wopen;
+    if(wx){ wx.setAttribute('aria-expanded', String(!wopen)); wx.textContent = wopen ? '＋' : '－'; }
+    (whyBlock.open || (whyBlock.open = {}))[sec.dataset.ws] = !wopen;
+    if(!wopen) setTimeout(mountVisibleCharts, 0);     /* ICT 차트는 펼쳐진 뒤에야 크기가 생긴다 */
+    return;
+  }
   var head = e.target.closest('.pick-head');
   if(!head) return;
   var btn = head.querySelector('.pk-x');
