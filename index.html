@@ -3135,13 +3135,16 @@ function drawSignalCharts(ser){
     opt.handleScale = {axisPressedMouseMove:false, mouseWheel:false, pinch:false, axisDoubleClickReset:false};
     opt.handleScroll = {mouseWheel:false, pressedMouseMove:false, horzTouchDrag:false, vertTouchDrag:false};
     opt.timeScale.timeVisible = false;
-    /* 눈금 글자: 연·월 경계는 '2026년'·'11월', 그 사이에 자리가 남으면 LWC 는 '10일' 같은 일 눈금을
-       끼워 넣는데 '10월 10일' 처럼 읽혀 헷갈린다 → 일 눈금은 '11.10' 로 쓴다 */
+    /* 눈금 글자: 달마다 하나 (09-10 사용자 "매달 표시"). LWC 는 글자 폭 추정(tickMarkMaxCharacterLength, 기본 8자)으로
+       눈금을 솎아 두 달에 하나만 남겼다 → 4자로 줄여 '10월' 이 다 들어가게. 연 경계는 '2026년'(1월 대신).
+       그 사이에 끼어들던 '11.10' 같은 일 눈금은 빈 글자로 숨긴다(ticksVisible 이 꺼져 있어 선도 안 남는다).
+       좁은 화면에선 LWC 가 다시 솎아 격월이 된다. */
+    opt.timeScale.tickMarkMaxCharacterLength = 4;
     opt.timeScale.tickMarkFormatter = function(t, type){
       var d = (typeof t === 'string') ? new Date(t + 'T00:00:00') : new Date(t.year, t.month - 1, t.day);
       if(type === 0) return d.getFullYear() + '년';
       if(type === 1) return (d.getMonth() + 1) + '월';
-      return (d.getMonth() + 1) + '.' + d.getDate();
+      return '';
     };
     var ch = LightweightCharts.createChart(el, opt);
     return ch;
