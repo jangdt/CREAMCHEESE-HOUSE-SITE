@@ -3982,15 +3982,16 @@ function liveApplyMarket(){
   var fxRaw = [last ? last.s : null, last ? last.l : null, g.state || (last ? last.f : null)];
   var differs = last && [m.sc, m.lc, m.fc].some(function(x, i){ return (x || 'NA') !== (fxRaw[i] || 'NA'); });
   var fxd = String(last && last.d || '').replace(/-/g, '');
-  var fxHtml = differs ? '<span class="fx" title="저녁 채점(히스테리시스 적용)으로 확정된 값 — 장중 잠정값과 다르다">확정 '+esc(fxd.slice(4,6))+'.'+esc(fxd.slice(6,8))+' '+fx.join('·')+'</span>' : '';
+  var fxHtml = differs ? '<span class="fx" title="저녁 채점(히스테리시스 적용)으로 확정된 값('+esc(fxd.slice(4,6))+'.'+esc(fxd.slice(6,8))+') — 장중 잠정값과 다르다">확정 '+fx.join('·')+'</span>' : '';
   host.hidden = false;
   if(fixed) fixed.hidden = true;
   host.innerHTML = sigLight('단기', m.sc || 'NA', null) + sigLight('장기', m.lc || 'NA', null) + sigLight('종합', m.fc || 'NA', null) +
-    '<span class="stamp"><span class="livedot">실시간</span><b>'+liveHM(m.ts)+' 잠정</b>'+
-    (m.b20!==null&&m.b20!==undefined ? '<span>20일선 아래 '+Math.round(m.b20*100)+'%</span>' : '')+
-    (m.adr!==null&&m.adr!==undefined ? '<span>ADR '+Math.round(m.adr)+'</span>' : '')+
-    (m.up20===true ? '<span>지수 &gt; 20일선</span>' : (m.up20===false ? '<span>지수 &lt; 20일선</span>' : ''))+
-    (+m.n ? '<span>'+(+m.n)+'종목</span>' : '')+fxHtml+'</span>';
+    /* 한 줄에 들어가게 짧게 (09-10 저녁 사용자 "두 줄 나는데 텍스트 좀 줄이자"): '잠정'·종목 수·확정 날짜를 뺐다 — 점선 신호등 + 실시간 점이 잠정임을 말한다 */
+    '<span class="stamp"><span class="livedot">실시간</span><b>'+liveHM(m.ts)+'</b>'+
+    (m.b20!==null&&m.b20!==undefined ? '<span title="20일선 아래 종목 비율">20일선↓ '+Math.round(m.b20*100)+'%</span>' : '')+
+    (m.adr!==null&&m.adr!==undefined ? '<span title="20일 누적 상승/하락 종목 수 비 ×100">ADR '+Math.round(m.adr)+'</span>' : '')+
+    (m.up20===true ? '<span>지수&gt;20일선</span>' : (m.up20===false ? '<span>지수&lt;20일선</span>' : ''))+
+    (+m.n && +m.n < SIG_MIN_POP ? '<span>'+(+m.n)+'종목뿐</span>' : '')+fxHtml+'</span>';
 }
 function liveSet(stateRows, marketRows, quoteRows){
   var st = {}, mk = {}, qt = {}, ts = null;
