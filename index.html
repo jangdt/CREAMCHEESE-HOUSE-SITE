@@ -216,7 +216,8 @@ body{
 }
 .why h4 i{font-style:normal}
 .why h4{cursor:pointer; user-select:none}
-.why h4 .ws-x{margin-left:auto; appearance:none; cursor:pointer; font:inherit; font-size:15px; line-height:1;
+.why h4 em{margin-left:auto}
+.why h4 .ws-x{appearance:none; cursor:pointer; font:inherit; font-size:15px; line-height:1;
   width:24px; height:24px; border:1px solid var(--rule-2); border-radius:3px; background:var(--card); color:var(--ink-3)}
 .why h4:hover .ws-x{color:var(--ink)}
 .why section.closed h4{margin-bottom:0; border-bottom:0}
@@ -2093,7 +2094,7 @@ var OPEN = null;      // 종목별 펼침 상태. null 이면 아직 첫 렌더 
 function warnChips(row, i){
   var st = row.st, out = [], mv = row.move, kind = surgeKind(mv);
   if(i < PICK_TOP){
-    out.push(row.cand ? '<span class="chip cand" title="매수 후보 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">후보</span>'
+    out.push(row.cand ? '<span class="chip cand" title="매수 추천 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">매수 추천</span>'
                       : '<span class="chip ref" title="참고 순위 — 후보 자리를 받지 못했거나 4~5위입니다">참고</span>');
   }
   if(row.gated) out.push('<span class="chip gate" title="시장 신호 — '+esc(GATE_KO[row.gate]||row.gate)+' 장세라 이 시장 후보 수 상한을 넘었습니다">신호 제외</span>');
@@ -2163,7 +2164,7 @@ function renderPicks(rows){
   host.innerHTML = sel.map(function(row, i){
     var head = (i === PICK_TOP)
       ? '<h3 class="resthead">다음 '+(sel.length-PICK_TOP)+'종목 <span>'+
-        (PICK_TOP+1)+'~'+sel.length+'위 · 후보 아님</span></h3>'
+        (PICK_TOP+1)+'~'+sel.length+'위 · 매수 추천 아님</span></h3>'
       : '';
     return head + pickCard(row, i, maxTotal);
   }).join('');
