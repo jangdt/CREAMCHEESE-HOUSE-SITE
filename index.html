@@ -201,7 +201,7 @@ body{
 .bar.off .lab em.role{border-style:dashed}
 
 /* 매매 계획 — 카드 면(card) 위의 가격 3열 + 손익비(폭이 다르다) */
-.plan{display:grid; grid-template-columns:1fr 1fr 1fr 1.22fr; gap:1px;
+.plan{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:1px;   /* 매수가 칸을 넓힌다 — 실시간 배지가 거기 붙는다 (09-10 저녁) */
   background:var(--rule); border-top:1px solid var(--rule)}
 .plan > div{background:var(--card); padding:13px 16px 15px}
 .plan .k{font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3)}
@@ -592,6 +592,8 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .lv.lv-entry, .lv.lv-near, .lv.lv-target, .lv.lv-stop{background:color-mix(in srgb, currentColor 13%, transparent)}   /* 상태색을 옅게 깐 알약 — 테두리 없이 (09-10 저녁 "더 예쁘게") */
 .lv *{text-decoration:none}
 .lv:empty{display:none}
+.plan .bx .n:has(.lv){margin-top:9px}            /* 매수가 칸의 실시간 배지 줄 */
+.plan .bx .n:has(.lv:empty){display:none}
 .lv i{width:7px; height:7px; border-radius:50%; background:currentColor; display:inline-block; box-shadow:0 0 6px currentColor}
 .lv.lv-entry{color:var(--green)}
 .lv.lv-near{color:var(--gold)}
@@ -604,6 +606,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .lights.live .tl b{color:var(--ink-3)}
 .lights.live .stamp{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); display:inline-flex; gap:12px; flex-wrap:wrap}
 .lights.live .stamp b{color:var(--ink-2); font-weight:600}
+.lights.live .stamp .fx{color:var(--ink-3); border-left:1px solid var(--rule-2); padding-left:12px}
 .u .lvu{display:inline-flex; align-items:center; gap:5px; flex:none}
 .u .lvu:empty{display:none}
 .u .lvu i{width:7px; height:7px; border-radius:50%; background:var(--rule-2); display:inline-block}
@@ -611,6 +614,12 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .u .lvu em{display:inline-block; width:34px; height:4px; background:var(--rule-2); border-radius:2px; overflow:hidden; font-style:normal}
 .u .lvu em b{display:block; height:100%; background:var(--ink-3)}
 .u .lvu.hi em b{background:var(--green)} .u .lvu.lo em b{background:var(--rise)}
+.unihead .lvleg{margin-left:auto; display:inline-flex; align-items:center; gap:5px; font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-3); white-space:nowrap}
+.unihead .lvleg i{width:7px; height:7px; border-radius:50%; display:inline-block; background:var(--rule-2)}
+.unihead .lvleg i.up{background:var(--green)} .unihead .lvleg i.dn{background:var(--rise)}
+.unihead .lvleg em{display:inline-block; width:26px; height:4px; background:var(--rule-2); border-radius:2px; overflow:hidden; font-style:normal}
+.unihead .lvleg em b{display:block; height:100%; width:65%; background:var(--ink-3)}
+@media (max-width:720px){ .unihead{flex-wrap:wrap} .unihead .lvleg{margin-left:0; flex-basis:100%; white-space:normal} }
 #livestamp{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); margin:0 0 10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
 .livedot{display:inline-flex; align-items:center; gap:6px; color:var(--green); font-weight:700; letter-spacing:.06em}
 .livedot::before{content:''; width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:livepulse 1.6s ease-in-out infinite}
@@ -2158,11 +2167,13 @@ function planMini(st, p){
 function planRow(st, p){
   var fs = FIX_STOP[MODE], fixLine = (fs && st.price) ? ' · 고정 −'+Math.round(fs*100)+'% 손절선 '+px(st.price*(1-fs)) : '';
   return '<div class="plan">'+
-    '<div><div class="k">매수가</div><div class="v buy">'+px(p.entry)+'</div><div class="n">'+esc(p.entry_label||'')+(HOLD_TXT[MODE] ? ' · '+HOLD_TXT[MODE] : '')+'</div></div>'+
+    /* 실시간 배지는 매수가 칸에 (09-10 저녁 사용자: "이 정보는 매수가에 있는 것이 맞는 거 같아") — 진입가 도달·근접이 매수가 얘기라서 */
+    '<div class="bx"><div class="k">매수가</div><div class="v buy">'+px(p.entry)+'</div><div class="n">'+esc(p.entry_label||'')+(HOLD_TXT[MODE] ? ' · '+HOLD_TXT[MODE] : '')+'</div>'+
+      '<div class="n"><span class="lv" data-lv="'+esc(st.ticker)+'"></span></div></div>'+
     '<div><div class="k">목표가</div><div class="v tgt">'+px(p.target)+'</div><div class="n">'+pc(p.reward_pct)+' · '+esc(p.target_label||'')+'</div></div>'+
     '<div><div class="k">손절가</div><div class="v cut">'+px(p.stop)+'</div><div class="n">'+pc(p.risk_pct)+' · '+esc(p.stop_label||'')+esc(fixLine)+'</div></div>'+
     '<div class="rr"><div class="k">손익비</div><div class="v">'+(p.rr!==undefined?p.rr.toFixed(2)+'R':'—')+'</div><div class="n">'+
-      (p.deep_price ? '2차 '+esc(p.deep_label)+' '+px(p.deep_price) : '현재가 '+px(st.price))+' <span class="lv" data-lv="'+esc(st.ticker)+'"></span></div></div>'+
+      (p.deep_price ? '2차 '+esc(p.deep_label)+' '+px(p.deep_price) : '현재가 '+px(st.price))+'</div></div>'+
   '</div>';
 }
 function whyBlock(row){
@@ -2393,7 +2404,9 @@ function renderUni(rows, sel){
     var list = KEYS.filter(function(t){ return S[t].market===m; })
       .sort(function(a,b){ return S[b].cap - S[a].cap; });
     if(!list.length) return '';
-    return '<div class="unihead"><h3>'+(m==='KOSPI'?'코스피':'코스닥')+'</h3><span>'+list.length+'종목 · 시가총액 순</span></div>'+
+    return '<div class="unihead"><h3>'+(m==='KOSPI'?'코스피':'코스닥')+'</h3><span>'+list.length+'종목 · 시가총액 순</span>'+
+      /* 장중 표시 범례 — 실시간 자료가 있을 때만 보인다 (09-10 저녁 사용자 "이 정보들 설명해줘" → "붙여줘") */
+      '<span class="lvleg" hidden><i class="up"></i>20일선 위 <i class="dn"></i>아래 · <em><b></b></em>오늘 등락 순위(상위 20% 초록·하위 20% 빨강) · 장중 잠정</span></div>'+
       '<div class="uni">'+list.map(function(t,i){
         var r = byT[t], on = !!hot[t];
         return '<div class="u'+(on?' hot':'')+'"'+(on?' title="선별 '+hot[t]+'위"':'')+
@@ -3823,6 +3836,8 @@ function liveApply(){
     el.title = '장중 잠정 '+LIVE.hm+' · '+(s.above20===true ? '20일선 위' : (s.above20===false ? '20일선 아래' : '20일선 못 잼'))+(pct===null ? '' : ' · 오늘 등락 순위 상위 '+(100-pct)+'%');
     el.innerHTML = '<i class="'+(s.above20===true?'up':(s.above20===false?'dn':''))+'"></i>'+(pct===null ? '' : '<em><b style="width:'+pct+'%"></b></em>');
   });
+  var anyU = Object.keys(LIVE.state).length > 0;
+  document.querySelectorAll('.lvleg').forEach(function(el){ el.hidden = !anyU; });
   var st = document.getElementById('livestamp');
   if(st){
     var n = Object.keys(LIVE.state).length, c = {};
@@ -3831,17 +3846,27 @@ function liveApply(){
   }
 }
 function liveApplyMarket(){
-  var host = document.getElementById('livelights');
+  /* 신호등은 한 줄만 (09-10 저녁 사용자 "이거 뭐야" — 확정 줄과 실시간 줄이 나란히 있으면 헷갈린다).
+     장중 값이 있으면 그 줄이 실시간 잠정(점선)이 되고, 저녁 확정값은 뒤에 작게 붙는다. 없으면 확정 줄 그대로. */
+  var host = document.getElementById('livelights'), fixed = document.getElementById('siglights');
   if(!host) return;
   var m = LIVE.market[SIG.mk];
-  if(!m){ host.hidden = true; host.innerHTML = ''; return; }
+  if(!m){ host.hidden = true; host.innerHTML = ''; if(fixed) fixed.hidden = false; return; }
+  var g = (DATA.regime && DATA.regime.gate && DATA.regime.gate[SIG.mk]) || {}, ser = SIG.series || [], last = ser.length ? ser[ser.length-1] : null;
+  var fx = [last ? last.s : null, last ? last.l : null, g.state || (last ? last.f : null)].map(function(x){ return SIG_KO[x] || x || '—'; });
+  /* 확정값은 잠정과 다를 때만 뒤에 작게 — 같으면 한 줄에 다 들어가고, 다르면 무엇이 바뀔 수 있는지 보인다 */
+  var fxRaw = [last ? last.s : null, last ? last.l : null, g.state || (last ? last.f : null)];
+  var differs = last && [m.sc, m.lc, m.fc].some(function(x, i){ return (x || 'NA') !== (fxRaw[i] || 'NA'); });
+  var fxd = String(last && last.d || '').replace(/-/g, '');
+  var fxHtml = differs ? '<span class="fx" title="저녁 채점(히스테리시스 적용)으로 확정된 값 — 장중 잠정값과 다르다">확정 '+esc(fxd.slice(4,6))+'.'+esc(fxd.slice(6,8))+' '+fx.join('·')+'</span>' : '';
   host.hidden = false;
+  if(fixed) fixed.hidden = true;
   host.innerHTML = sigLight('단기', m.sc || 'NA', null) + sigLight('장기', m.lc || 'NA', null) + sigLight('종합', m.fc || 'NA', null) +
     '<span class="stamp"><span class="livedot">실시간</span><b>'+liveHM(m.ts)+' 잠정</b>'+
     (m.b20!==null&&m.b20!==undefined ? '<span>20일선 아래 '+Math.round(m.b20*100)+'%</span>' : '')+
     (m.adr!==null&&m.adr!==undefined ? '<span>ADR '+Math.round(m.adr)+'</span>' : '')+
     (m.up20===true ? '<span>지수 &gt; 20일선</span>' : (m.up20===false ? '<span>지수 &lt; 20일선</span>' : ''))+
-    (+m.n ? '<span>'+(+m.n)+'종목</span>' : '')+'</span>';
+    (+m.n ? '<span>'+(+m.n)+'종목</span>' : '')+fxHtml+'</span>';
 }
 function liveSet(stateRows, marketRows, quoteRows){
   var st = {}, mk = {}, qt = {}, ts = null;
