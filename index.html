@@ -203,12 +203,17 @@ body{
 .grade.gC{border-left-color:var(--rule-2)} .grade.gC b{color:var(--ink-2)}
 .grade.gD{border-left-color:var(--fall); background:color-mix(in srgb, var(--fall) 8%, var(--card))}
 .grade.gD b{color:var(--fall)}
-.why{padding:6px 20px 20px; border-top:1px solid var(--rule)}
+/* 산정 이유 — 항목마다 '점수 구성·매매 계획' 과 같은 띠 머리(seclab) + 위 경계선. 문단 구분이 안 보인다는 지적(09-10) */
+.why{padding:0}
+.why section{border-top:1px solid var(--rule-2); padding:0 20px 18px; margin-top:6px}
+.why section:first-child{margin-top:0}
 .why h4{
-  margin:16px 0 7px; font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-  color:var(--ink-3); font-weight:600; display:flex; align-items:center; gap:9px;
+  margin:0 -20px 12px; padding:11px 16px 9px; background:var(--paper); border-bottom:1px solid var(--rule);
+  font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-2); font-weight:700;
+  display:flex; align-items:baseline; gap:10px;
 }
-.why h4::after{content:""; flex:1; height:1px; background:var(--rule)}
+.why h4 i{font-style:normal}
+.why h4 em{font-style:normal; font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:500; color:var(--ink-3); letter-spacing:0; font-variant-numeric:tabular-nums}
 .why p{margin:0 0 8px; font-size:13.5px; color:var(--ink-2); max-width:74ch}
 .why p em{font-style:normal; color:var(--ink); font-weight:500}
 .why .num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
@@ -2050,12 +2055,14 @@ function whyBlock(row){
   return (p.grade ? '<div class="grade g'+p.grade+'"><b>진입 등급 '+p.grade+'</b><span>'+
       esc(GRADE_TXT[p.grade] || p.grade_why || '')+'</span></div>' : '')+
     '<div class="why">'+
-      '<h4>ICT 진입점 · '+pctTxt(row.pcts.ict)+'</h4>'+reasonIct(st)+
-      '<h4>수급 · '+pctTxt(row.pcts.supply)+'</h4>'+reasonSupply(st)+
-      '<h4>마감 품질 · '+pctTxt(row.pcts.close)+'</h4>'+reasonClose(st)+
-      '<h4>밸류 · '+pctTxt(row.pcts.value)+'</h4>'+reasonValue(st)+
-      '<h4>실적 · '+pctTxt(row.pcts.perf)+'</h4>'+reasonPerf(st)+
-      '<h4>리스크 점검</h4>'+reasonRisk(row)+
+      [['ICT 진입점', pctTxt(row.pcts.ict), reasonIct(st)],
+       ['수급', pctTxt(row.pcts.supply), reasonSupply(st)],
+       ['마감 품질', pctTxt(row.pcts.close), reasonClose(st)],
+       ['밸류', pctTxt(row.pcts.value), reasonValue(st)],
+       ['실적', pctTxt(row.pcts.perf), reasonPerf(st)],
+       ['리스크 점검', '', reasonRisk(row)]].map(function(x){
+        return '<section><h4><i>'+x[0]+'</i>'+(x[1] ? '<em>'+x[1]+'</em>' : '')+'</h4>'+(x[2] || '<p class="dim">자료 없음</p>')+'</section>';
+      }).join('')+
     '</div>';
 }
 function chips(st){
