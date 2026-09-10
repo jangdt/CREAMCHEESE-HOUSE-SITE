@@ -135,7 +135,7 @@ body{
 .pick-head{display:flex; gap:18px; align-items:center; padding:16px 20px; border-bottom:1px solid var(--rule); flex-wrap:wrap}
 .rank{
   font-family:"Nanum Myeongjo",serif; font-size:30px; font-weight:800; color:var(--ink);   /* 순위는 흰색(잉크) — 09-10 사용자 */
-  width:40px; text-align:center; flex:none; line-height:1
+  width:56px; text-align:center; flex:none; line-height:1
 }
 .who{flex:1 1 200px; min-width:0}
 .who h3{margin:0; font-size:20px; font-weight:600; letter-spacing:-.01em}
@@ -143,6 +143,8 @@ body{
 /* 카드 머리의 매매 계획 요약 — 접힌 카드에서도 등급·매수·목표·손절·손익비가 보인다 (09-10 사용자 선택) */
 .pick.open .who .pmini{display:none}         /* 펼치면 아래 매매 계획 표와 겹치니 접힌 카드에서만 (09-10 사용자) */
 .who .pmini{display:flex; gap:14px; flex-wrap:wrap; align-items:baseline; margin-top:8px; font-family:"IBM Plex Mono",monospace; font-size:13px; font-variant-numeric:tabular-nums; color:var(--ink-3)}
+.who .pmini:has(.lv:empty){display:none}     /* 실시간 배지가 비면 줄도 없다 */
+.who .pmini .lv{font-size:12.5px; padding:4px 12px}
 .who .pmini b{font-size:15px; font-weight:600; color:var(--ink-2); margin-left:4px}
 .who .pmini .tgt b{color:var(--green)} .who .pmini .cut b{color:var(--rise)}
 .who .pmini .g{font-weight:700; padding:0 7px; border:1.5px solid; border-radius:2px; font-size:12.5px}
@@ -585,15 +587,18 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 @media(max-width:760px){ .sigchart{height:250px} .sighead{gap:12px} }
 
 /* ---------- 장중 파생 상태 (09-10) — 시세 숫자 없이 '위치' 만. 점선 = 잠정 ---------- */
-.lv{display:inline-flex; align-items:center; gap:5px; font-family:"IBM Plex Mono",monospace; font-size:12px; padding:1px 8px; border:1px solid var(--rule-2); border-radius:2px; color:var(--ink-2); white-space:nowrap}
+.lv{display:inline-flex; align-items:center; gap:7px; font-family:"IBM Plex Mono",monospace; font-size:12px; padding:3px 11px; border:0; border-radius:999px; color:var(--ink-2); background:color-mix(in srgb, var(--ink-3) 14%, transparent); white-space:nowrap; text-decoration:none}
+.lv.lv-entry, .lv.lv-near, .lv.lv-target, .lv.lv-stop{background:color-mix(in srgb, currentColor 13%, transparent)}   /* 상태색을 옅게 깐 알약 — 테두리 없이 (09-10 저녁 "더 예쁘게") */
+.lv *{text-decoration:none}
 .lv:empty{display:none}
-.lv i{width:8px; height:8px; border-radius:50%; background:currentColor; display:inline-block}
-.lv.lv-entry{color:var(--green); border-color:var(--green)}
-.lv.lv-near{color:var(--gold); border-color:var(--gold)}
-.lv.lv-target{color:var(--dragon); border-color:var(--dragon)}
-.lv.lv-stop{color:var(--rise); border-color:var(--rise)}
+.lv i{width:7px; height:7px; border-radius:50%; background:currentColor; display:inline-block; box-shadow:0 0 6px currentColor}
+.lv.lv-entry{color:var(--green)}
+.lv.lv-near{color:var(--gold)}
+.lv.lv-target{color:var(--dragon)}
+.lv.lv-stop{color:var(--rise)}
 .lv small{color:var(--ink-3); font-size:10.5px; margin-left:2px}
 .lv .q{color:var(--ink); font-weight:600}
+.lv .up{color:var(--rise)} .lv .dn{color:var(--fall)}
 .lights.live .tl .box{border-style:dashed}
 .lights.live .tl b{color:var(--ink-3)}
 .lights.live .stamp{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); display:inline-flex; gap:12px; flex-wrap:wrap}
@@ -622,6 +627,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .diffbar .in b::before{content:"＋ "} .diffbar .out b::before{content:"－ "}
 .rank small{display:block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:500; margin-top:4px; letter-spacing:0; color:var(--ink-3)}
 .rank small.up{color:var(--green)} .rank small.dn{color:var(--rise)} .rank small.new{color:var(--green); font-weight:700}
+.rank small.cand{color:var(--green); font-weight:700; white-space:nowrap; letter-spacing:.02em}   /* 매수 추천 — 순위 아래 (09-10 저녁) */
 .gatebar + .picks{margin-top:18px}
 .gatebar b{font-family:"IBM Plex Mono",monospace; letter-spacing:.04em; padding:1px 7px; border-radius:2px; border:1px solid var(--rule-2)}
 .gatebar b.G{color:var(--rise); border-color:var(--rise)} .gatebar b.Y{color:var(--gold); border-color:var(--gold)}
@@ -2144,15 +2150,9 @@ function scoreBars(row){
 var FIX_STOP = {month:0.08};                   /* 중기 스윙: 고정 −8% 손절선 (보유 중 −10% 를 겪는 경우가 38%, −8% 접촉 48%) */
 var HOLD_TXT = {day:'9시 15분 전 매도', long:'60거래일 보유', month:'20거래일 보유'};
 function planMini(st, p){
-  if(!p || !p.entry) return '';
-  return '<div class="pmini">'+
-    (p.grade ? '<span class="g g'+p.grade+'" title="'+esc(GRADE_TXT[p.grade]||'')+'">등급 '+p.grade+'</span>' : '')+
-    '<span class="buy">매수<b>'+px(p.entry)+'</b></span>'+
-    '<span class="tgt">목표<b>'+px(p.target)+'</b></span>'+
-    '<span class="cut">손절<b>'+px(p.stop)+'</b></span>'+
-    (p.rr!==undefined ? '<span class="rr">손익비<b>'+p.rr.toFixed(2)+'R</b></span>' : '')+
-    '<span class="lv" data-lv="'+esc(st.ticker)+'"></span>'+
-  '</div>';
+  /* 09-10 저녁 사용자: "너무 난잡" — 카드 머리엔 매수/목표/손절/손익비·등급을 안 쓴다. 실시간 배지 한 줄만 (없으면 줄 자체가 숨는다).
+     매매 계획 숫자는 펼친 카드의 표에, 등급은 펼친 카드의 '진입 등급' 줄에 있다 (등급은 승률 근거가 아니라 머리에서 뺐다). */
+  return '<div class="pmini"><span class="lv" data-lv="'+esc(st.ticker)+'"></span></div>';
 }
 function planRow(st, p){
   var fs = FIX_STOP[MODE], fixLine = (fs && st.price) ? ' · 고정 −'+Math.round(fs*100)+'% 손절선 '+px(st.price*(1-fs)) : '';
@@ -2195,10 +2195,10 @@ function chips(st){
 var OPEN = null;      // 종목별 펼침 상태. null 이면 아직 첫 렌더 전
 
 /* 점수 밖 경고 칩 — 채점은 그대로 두고 사람이 판단할 재료만 단다 (최종 제안 §5) */
-function warnChips(row, i){
+function warnChips(row, i, noCand){   /* noCand: 매수 추천은 순위 칸 아래 작은 글자로 (09-10 저녁 "매수 추천 칩이 난잡") */
   var st = row.st, out = [], mv = row.move, kind = surgeKind(mv);
   if(i < PICK_TOP){
-    out.push(row.cand ? '<span class="chip cand" title="매수 추천 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">매수 추천</span>'
+    out.push(row.cand ? (noCand ? '' : '<span class="chip cand" title="매수 추천 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">매수 추천</span>')
                       : '<span class="chip ref" title="참고 순위 — 후보 자리를 받지 못했거나 4~5위입니다">참고</span>');
   }
   if(row.gated) out.push('<span class="chip gate" title="시장 신호 — '+esc(GATE_KO[row.gate]||row.gate)+' 장세라 이 시장 후보 수 상한을 넘었습니다">신호 제외</span>');
@@ -2234,10 +2234,11 @@ function pickCard(row, i, maxTotal){
   var st = row.st, p = st.plan || {};
   var open = !!OPEN[st.ticker];               // 다시 그려도 접고 편 상태를 유지
   return '<article class="pick'+(i < PICK_TOP ? ' top5' : ' rest')+(row.gated||row.surged||row.funnel?' gated':'')+(open?' open':'')+'">'+
-    '<div class="pick-head"><div class="rank">'+(i+1)+rankDelta(row)+'</div>'+
+    '<div class="pick-head"><div class="rank">'+(i+1)+rankDelta(row)+
+      (row.cand && i < PICK_TOP ? '<small class="cand" title="매수 추천 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">매수 추천</small>' : '')+'</div>'+
     '<div class="who"><h3>'+esc(st.name)+'</h3><div class="meta">'+chips(st)+
     '<span>시총 '+won(st.cap)+'원</span>'+
-    warnChips(row, i)+
+    warnChips(row, i, true)+
     '</div>'+planMini(st, p)+'</div>'+
     sparkSVG((st.hist||[]).map(function(x){return x[1];}).slice(-90))+
     '<div class="total"><b>'+row.total.toFixed(0)+'</b><span>'+
@@ -3785,7 +3786,7 @@ function bumpView(id){
      live_state  종목별 st(none/near/entry/target/stop) · above20 · rank_pct     — 모두 읽기
      live_market 시장별 b20 · adr · up20 · sc/lc/fc(잠정 후보)                    — 모두 읽기
      live_quotes 현재가·등락률                                                   — 관리자만(세션 토큰)
-   웹본(LAZY)만, 장중(08:50~15:45 KST)엔 30초마다, 그 밖엔 5분마다 '오늘 마지막 값' 만 확인. 화면을 다시 그리지 않고
+   Supabase 설정이 있는 사본(웹본·미리보기)에서, 장중(08:50~15:45 KST)엔 30초마다, 그 밖엔 5분마다 '오늘 마지막 값' 만 확인. 화면을 다시 그리지 않고
    자리표(data-lv / data-lvu / #livelights)만 채운다 — 읽는 중에 카드가 튀지 않는다. */
 var LIVE = {state:{}, market:{}, quotes:{}, ts:null, timer:null};
 var LIVE_KO = {entry:'진입가 도달', near:'진입가 근접', target:'목표가 도달', stop:'손절가 터치'};
@@ -3800,9 +3801,10 @@ function liveBadge(t){
   var s = LIVE.state[t]; if(!s) return '';
   var q = LIVE.quotes[t];
   var head = (s.st && LIVE_KO[s.st]) ? '<i></i>'+LIVE_KO[s.st] : '';
-  var qtxt = q ? '<span class="q">'+px(q.price)+'</span>'+(q.chg!==null&&q.chg!==undefined ? ' '+(q.chg>=0?'+':'')+Number(q.chg).toFixed(2)+'%' : '') : '';
+  var qtxt = q ? '<span class="q">'+px(q.price)+'원</span>'+(q.chg!==null&&q.chg!==undefined ? ' <span class="'+(q.chg>0?'up':(q.chg<0?'dn':''))+'">'+(q.chg>0?'+':(q.chg<0?'−':''))+Math.abs(Number(q.chg)).toFixed(2)+'%</span>' : '') : '';
   if(!head && !qtxt) return '';
-  return head + (qtxt ? (head?' · ':'')+qtxt : '') + '<small>실시간 '+LIVE.hm+'</small>';
+  /* 순서: [● 상태 ·] 실시간 HH:MM [가격원 ±x.xx%]  (09-10 사용자: "실시간 14:52 268,750원 −0.37%") */
+  return (head ? head+' · ' : '') + '<small>실시간 '+LIVE.hm+'</small>' + (qtxt ? ' '+qtxt : '');
 }
 function liveApply(){
   if(!LIVE.ts) return;
@@ -3849,7 +3851,7 @@ function liveSet(stateRows, marketRows, quoteRows){
   liveApply(); liveApplyMarket();
 }
 function livePull(){
-  if(!(LAZY && SUPA)) return Promise.resolve(false);
+  if(!SUPA) return Promise.resolve(false);              /* 미리보기 서버(전체본)에서도 보인다 — Supabase 설정만 있으면 */
   var day = liveDay();
   var jobs = [restGet('live_state?day=eq.'+day+'&select=ticker,st,above20,rank_pct,ts'),
               restGet('live_market?day=eq.'+day+'&select=market,ts,b20,adr,up20,sc,lc,fc,n')];
@@ -3861,7 +3863,7 @@ function livePull(){
     .catch(function(e){ console.warn('live', e); return false; });
 }
 function liveBoot(){
-  if(!(LAZY && SUPA) || location.protocol === 'file:') return;
+  if(!SUPA || location.protocol === 'file:') return;
   var tick = function(){
     livePull();
     clearTimeout(LIVE.timer);
