@@ -135,10 +135,11 @@ body{
 .pick-head{display:flex; gap:18px; align-items:center; padding:16px 20px; border-bottom:1px solid var(--rule); flex-wrap:wrap}
 .rank{
   font-family:"Nanum Myeongjo",serif; font-size:30px; font-weight:800; color:var(--ink);   /* 순위는 흰색(잉크) — 09-10 사용자 */
-  width:56px; text-align:center; flex:none; line-height:1
+  width:40px; text-align:center; flex:none; line-height:1
 }
 .who{flex:1 1 200px; min-width:0}
-.who h3{margin:0; font-size:20px; font-weight:600; letter-spacing:-.01em}
+.who h3{margin:0; font-size:20px; font-weight:600; letter-spacing:-.01em; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.who h3 small.cand{font-size:13px; font-weight:700; color:var(--green); letter-spacing:.02em; white-space:nowrap}   /* 매수 추천 — 종목명 옆 (09-10 저녁 사용자 그림) */
 .who .meta{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:2px}
 /* 카드 머리의 매매 계획 요약 — 접힌 카드에서도 등급·매수·목표·손절·손익비가 보인다 (09-10 사용자 선택) */
 .pick.open .who .pmini{display:none}         /* 펼치면 아래 매매 계획 표와 겹치니 접힌 카드에서만 (09-10 사용자) */
@@ -627,7 +628,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .diffbar .in b::before{content:"＋ "} .diffbar .out b::before{content:"－ "}
 .rank small{display:block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:500; margin-top:4px; letter-spacing:0; color:var(--ink-3)}
 .rank small.up{color:var(--green)} .rank small.dn{color:var(--rise)} .rank small.new{color:var(--green); font-weight:700}
-.rank small.cand{color:var(--green); font-weight:700; white-space:nowrap; letter-spacing:.02em}   /* 매수 추천 — 순위 아래 (09-10 저녁) */
+
 .gatebar + .picks{margin-top:18px}
 .gatebar b{font-family:"IBM Plex Mono",monospace; letter-spacing:.04em; padding:1px 7px; border-radius:2px; border:1px solid var(--rule-2)}
 .gatebar b.G{color:var(--rise); border-color:var(--rise)} .gatebar b.Y{color:var(--gold); border-color:var(--gold)}
@@ -2234,9 +2235,9 @@ function pickCard(row, i, maxTotal){
   var st = row.st, p = st.plan || {};
   var open = !!OPEN[st.ticker];               // 다시 그려도 접고 편 상태를 유지
   return '<article class="pick'+(i < PICK_TOP ? ' top5' : ' rest')+(row.gated||row.surged||row.funnel?' gated':'')+(open?' open':'')+'">'+
-    '<div class="pick-head"><div class="rank">'+(i+1)+rankDelta(row)+
-      (row.cand && i < PICK_TOP ? '<small class="cand" title="매수 추천 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">매수 추천</small>' : '')+'</div>'+
-    '<div class="who"><h3>'+esc(st.name)+'</h3><div class="meta">'+chips(st)+
+    '<div class="pick-head"><div class="rank">'+(i+1)+rankDelta(row)+'</div>'+
+    '<div class="who"><h3>'+esc(st.name)+
+      (row.cand && i < PICK_TOP ? '<small class="cand" title="매수 추천 자리 (1~'+candN()+'위). 최종 판단은 사람이 합니다">매수 추천</small>' : '')+'</h3><div class="meta">'+chips(st)+
     '<span>시총 '+won(st.cap)+'원</span>'+
     warnChips(row, i, true)+
     '</div>'+planMini(st, p)+'</div>'+
