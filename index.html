@@ -573,7 +573,9 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .chip.seq{color:#EAF2FA; background:#1F5F9C; border-color:#1F5F9C; font-weight:600}
 .pick.gated{opacity:.62}
 /* ---------- 시장 신호 탭 ---------- */
-.sighead{display:flex; align-items:center; gap:22px; flex-wrap:wrap; margin:26px 0 10px}
+.sighead{display:flex; align-items:center; gap:22px; flex-wrap:nowrap; margin:26px 0 10px}   /* 시장 토글 + 신호등이 늘 한 줄 (코스피·코스닥이 같은 자리에) — 실시간 요약만 남은 폭 안에서 줄바꿈 */
+.sighead .lights{flex:1 1 0; min-width:0}
+@media(max-width:900px){ .sighead{flex-wrap:wrap} .sighead .lights{flex-basis:100%} }
 .sighead h2{font-size:22px; margin:0; letter-spacing:-.01em}
 .sighead h2 .hastip{font-size:13px; color:var(--ink-3); cursor:help; margin-left:4px}
 .sigmk{display:inline-flex; border:1px solid var(--rule-2); border-radius:3px; overflow:hidden}
@@ -627,7 +629,9 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .lights.live .stamp{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); display:inline-flex; gap:4px 12px; flex-wrap:wrap; flex:1 1 0; min-width:0; line-height:1.5}
 @media(max-width:760px){ .lights.live{flex-wrap:wrap} .lights.live .stamp{flex-basis:100%} }
 .lights.live .stamp b{color:var(--ink-2); font-weight:600}
-.lights.live .stamp .fx{color:var(--ink-3); border-left:1px solid var(--rule-2); padding-left:12px}
+.lights.live .stamp .fx{color:var(--ink-3); border-left:1px solid var(--rule-2); padding-left:12px; cursor:help; white-space:nowrap}
+.lights.live .stamp .fx i{width:8px; height:8px; border-radius:50%; display:inline-block; margin-left:4px; vertical-align:-1px; background:#2b2f37}
+.lights.live .stamp .fx i.G{background:#22c55e} .lights.live .stamp .fx i.Y{background:#f59e0b} .lights.live .stamp .fx i.R{background:#ef4444}
 .u .lvu{display:inline-flex; align-items:center; gap:5px; flex:none}
 .u .lvu:empty{display:none}
 .u .lvu i{width:7px; height:7px; border-radius:50%; background:var(--rule-2); display:inline-block}
@@ -3971,18 +3975,13 @@ function liveApply(){
 }
 function liveApplyMarket(){
   /* 신호등은 한 줄만 (09-10 저녁 사용자 "이거 뭐야" — 확정 줄과 실시간 줄이 나란히 있으면 헷갈린다).
-     장중 값이 있으면 그 줄이 실시간 잠정(점선)이 되고, 저녁 확정값은 뒤에 작게 붙는다. 없으면 확정 줄 그대로. */
+     장중 값이 있으면 그 줄이 실시간 잠정(점선)이 되고, 없으면(장 밖) 확정 줄 그대로. */
   var host = document.getElementById('livelights'), fixed = document.getElementById('siglights');
   if(!host) return;
   var m = LIVE.market[SIG.mk];
   if(!m){ host.hidden = true; host.innerHTML = ''; if(fixed) fixed.hidden = false; return; }
-  var g = (DATA.regime && DATA.regime.gate && DATA.regime.gate[SIG.mk]) || {}, ser = SIG.series || [], last = ser.length ? ser[ser.length-1] : null;
-  var fx = [last ? last.s : null, last ? last.l : null, g.state || (last ? last.f : null)].map(function(x){ return SIG_KO[x] || x || '—'; });
-  /* 확정값은 잠정과 다를 때만 뒤에 작게 — 같으면 한 줄에 다 들어가고, 다르면 무엇이 바뀔 수 있는지 보인다 */
-  var fxRaw = [last ? last.s : null, last ? last.l : null, g.state || (last ? last.f : null)];
-  var differs = last && [m.sc, m.lc, m.fc].some(function(x, i){ return (x || 'NA') !== (fxRaw[i] || 'NA'); });
-  var fxd = String(last && last.d || '').replace(/-/g, '');
-  var fxHtml = differs ? '<span class="fx" title="저녁 채점(히스테리시스 적용)으로 확정된 값('+esc(fxd.slice(4,6))+'.'+esc(fxd.slice(6,8))+') — 장중 잠정값과 다르다">확정 '+fx.join('·')+'</span>' : '';
+  /* 확정값 표시(글자→색점)는 뺐다 (09-10 저녁 사용자 "그냥 없애줘") — 장중엔 잠정 신호등만, 확정은 저녁에 이 줄이 실선으로 돌아오며 보인다 */
+  var fxHtml = '';
   host.hidden = false;
   if(fixed) fixed.hidden = true;
   host.innerHTML = sigLight('단기', m.sc || 'NA', null) + sigLight('장기', m.lc || 'NA', null) + sigLight('종합', m.fc || 'NA', null) +
