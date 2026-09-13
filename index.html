@@ -467,12 +467,29 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .btwarn{margin:0 0 18px; padding:11px 15px; border-left:3px solid var(--gold);
   background:color-mix(in srgb, var(--gold) 8%, var(--card)); font-size:12.5px; color:var(--ink-2); max-width:82ch}
 .btwarn b{color:var(--ink)}
-/* 포트폴리오(가상 매매 장부) 탭 — 백테스트 탭의 표·통계 스타일을 그대로 쓴다 */
+/* 추종 기록(가상 매매 장부) 탭 — 시안 B(09-13 사용자): 두 전략 카드 나란히 · 월별 결산 한 표 · 나머지는 접힘 */
 .pph{font-size:13.5px; font-weight:600; color:var(--ink); margin:22px 0 8px}
-.pph small{font-weight:400; color:var(--ink-3); font-size:12px; margin-left:8px}
-.ppstamp{font-size:12px; color:var(--ink-3); margin-left:auto}
-#ppchart{position:relative}
-#ppchart svg{display:block; width:100%; height:auto; overflow:visible}
+.pph small{font-weight:400; color:var(--ink-3); font-size:12px; margin-left:8px; font-family:"IBM Plex Mono",monospace}
+.pptwo{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:4px 0 6px}
+@media (max-width:760px){ .pptwo{grid-template-columns:1fr} }
+.ppcard{background:var(--card); border:1px solid var(--rule); padding:16px 18px 12px; min-width:0}
+.ppcard h4{margin:0 0 8px; font-size:13.5px; font-weight:600; display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+.ppcard h4 small{font-weight:400; color:var(--ink-3); font-size:11.5px; font-family:"IBM Plex Mono",monospace; text-align:right}
+.ppcard .big{font-family:"IBM Plex Mono",monospace; font-size:30px; font-weight:600; letter-spacing:-.02em; line-height:1.1; font-variant-numeric:tabular-nums}
+.ppcard .sub{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-2); margin:4px 0 8px; line-height:1.6}
+.ppcard .sub b{font-weight:600}
+.ppcard svg.ppspark{display:block; width:100%; height:48px}
+.ppcard .hold{border-top:1px solid var(--rule); margin-top:8px; padding-top:8px; font-size:12.5px}
+.ppcard .hold div{display:flex; justify-content:space-between; gap:10px; padding:2px 0}
+.ppcard .hold .m{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap}
+.ppcard .hold .mut{color:var(--ink-3)}
+.ppfold{margin-top:12px; font-size:12.5px; color:var(--ink-3)}
+.ppfold details{margin-top:6px}
+.ppfold summary{cursor:pointer; color:var(--ink-2); list-style:none; user-select:none; font-weight:500}
+.ppfold summary::before{content:"＋ "; color:var(--ink-3)}
+.ppfold details[open] summary::before{content:"－ "}
+.ppfold .scroll{margin:6px 0 10px}
+.ppfold h5{font-size:12px; font-weight:600; color:var(--ink-2); margin:8px 0 4px}
 #p-paper .bttab td.nm{text-align:left; font-family:inherit}
 #p-paper .bttab td.why{font-family:inherit; color:var(--ink-3); font-size:11.5px}
 #p-paper .empty{color:var(--ink-3); font-size:12.5px; padding:10px 0}
@@ -897,7 +914,7 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
     <button role="tab" aria-selected="true" data-tab="picks">매수 추천</button>
     <button role="tab" aria-selected="false" data-tab="uni">대상 종목</button>
     <button role="tab" aria-selected="false" data-tab="backtest">백테스트</button>
-    <button role="tab" aria-selected="false" data-tab="paper">포트폴리오</button>
+    <button role="tab" aria-selected="false" data-tab="paper">추종 기록</button>
     <span class="spacer"></span>
     <button role="tab" aria-selected="false" data-tab="board">자유게시판</button>
   </nav>
@@ -1056,30 +1073,14 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 
   <section id="p-paper" hidden>
     <div class="band">
-      <div class="desc">매수 추천을 <b>정해진 비중 규칙으로 가상 매매</b>한 장부입니다 — 전략별 가상 계좌 1,000만 원,
-        종가 베팅은 T 종가 → T+1 시가, 중기 스윙은 T+1 시가 → 20거래일째 종가, 비용 0.18%.
-        확정 추천이 쌓인 날부터 기록하고 매일 저녁 갱신합니다. 백테스트와 달리 <b>이미 발표한 추천만</b> 들어갑니다.</div>
+      <div class="desc">발표한 매수 추천을 <b>그대로 따라 샀다면</b> — 전략별 가상 계좌 1,000만 원, 정해진 비중으로 매일 저녁 기록합니다.
+        백테스트와 달리 <b>이미 발표한 추천만</b> 들어갑니다.</div>
     </div>
-    <div class="btctl" id="ppctl">
-      <label>전략 <select id="ppstrat"><option value="day">종가 베팅</option><option value="month" selected>중기 스윙</option></select></label>
-      <label>비중 규칙 <select id="ppvar"></select></label>
-      <span class="ppstamp" id="ppstamp"></span>
-    </div>
-    <div class="btstats" id="ppstats"></div>
-    <figure class="btfig">
-      <figcaption id="ppcap"></figcaption>
-      <div id="ppchart"></div>
-      <div class="btlegend" id="pplegend"></div>
-    </figure>
-    <h3 class="pph">월별 결산</h3>
+    <div class="pptwo" id="ppcards"></div>
+    <h3 class="pph">월별 결산 <small id="ppstamp"></small></h3>
     <div class="scroll"><table class="bttab" id="ppmonth"></table></div>
-    <h3 class="pph">보유 중</h3>
-    <div class="scroll"><table class="bttab" id="ppopen"></table></div>
-    <h3 class="pph">최근 청산</h3>
-    <div class="scroll"><table class="bttab" id="ppclosed"></table></div>
-    <h3 class="pph">비중 규칙 비교 <small>같은 종목, 비중만 다르게</small></h3>
-    <div class="scroll"><table class="bttab" id="ppvars"></table></div>
-    <p class="btwarn" id="ppnote"></p>
+    <div class="ppfold" id="ppfold"></div>
+    <p class="btwarn" id="ppnote" hidden></p>
   </section>
 
   <section id="p-board" hidden>
@@ -4823,9 +4824,10 @@ function btLine(curves, labels, colors, dates){
     g+xs.join('')+paths+'</svg>';
 }
 
-/* ---------- 포트폴리오 — 가상 매매 장부 (dt/paper.py → Supabase paper_book id='latest') ----------
+/* ---------- 추종 기록 — 가상 매매 장부 (dt/paper.py → Supabase paper_book id='latest') ----------
    사실(날짜별 후보·체결가)은 PC 가 매일 저녁 계산해 올리고, 화면은 읽어서 그리기만 한다.
-   표·숫자·차트만(09-10 UI 원칙). 전략·비중 규칙 셀렉트 둘 외에 조작은 없다. */
+   시안 B(09-13 사용자 선택): 두 전략 카드 나란히(큰 수익률 · 시장 대비 · 승률 · 낙폭 · 작은 곡선 · 보유 중) → 월별 결산 한 표 → 접힌 최근 청산·비중 규칙 비교.
+   조작은 없다. 기본 비중 규칙(base)만 카드에, 나머지 변형은 접힌 비교표에. */
 var PAPER = {book:null, loading:false, err:null};
 function paperOpen(){
   if(PAPER.book || PAPER.loading){ renderPaper(); return; }
@@ -4833,87 +4835,87 @@ function paperOpen(){
   var src = (DATA.paper && DATA.paper.strats) ? Promise.resolve([{doc:DATA.paper}]) : restGet('paper_book?id=eq.latest&select=doc');
   src.then(function(rows){
     PAPER.book = (rows && rows[0] && rows[0].doc) || null;
-    if(!PAPER.book) PAPER.err = '아직 장부가 없습니다';
-  }).catch(function(e){ PAPER.err = '장부를 받아오지 못했습니다 (' + (e && e.message || e) + ')'; })
+    if(!PAPER.book) PAPER.err = '아직 기록이 없습니다';
+  }).catch(function(e){ PAPER.err = '기록을 받아오지 못했습니다 (' + (e && e.message || e) + ')'; })
     .then(function(){ PAPER.loading = false; renderPaper(); });
 }
-function ppPct(v, d){ return (v===null||v===undefined||isNaN(v)) ? '—' : pc(v*100, d===undefined?2:d); }
+function ppPct(v, d){ return (v===null||v===undefined||isNaN(v)) ? '—' : pc(v*100, d===undefined?1:d); }
+function ppPp(v){ return (v===null||v===undefined||isNaN(v)) ? '—' : (v>0?'+':(v<0?'−':''))+Math.abs(v*100).toFixed(1)+'%p'; }
 function ppCell(v, d){ return '<td class="'+sgn(v)+'">'+ppPct(v, d)+'</td>'; }
 function ppD(d){ return d ? fmtD(String(d)) : '—'; }
-function renderPaper(){
-  var host = document.getElementById('ppstats'); if(!host) return;
-  var chart = document.getElementById('ppchart'), note = document.getElementById('ppnote');
-  function clear(msg){
-    host.innerHTML = ''; chart.innerHTML = ''; document.getElementById('pplegend').innerHTML = ''; document.getElementById('ppcap').textContent = '';
-    ['ppmonth','ppopen','ppclosed','ppvars'].forEach(function(id){ document.getElementById(id).innerHTML = ''; });
-    note.innerHTML = msg || ''; note.hidden = !msg;
-  }
-  if(PAPER.loading){ clear('장부를 받아오는 중…'); return; }
-  var bk = PAPER.book;
-  if(!bk){ clear(esc(PAPER.err || '아직 장부가 없습니다')); return; }
-  var mode = document.getElementById('ppstrat').value, ent = bk.strats[mode];
-  if(!ent){ clear('이 전략의 장부가 없습니다'); return; }
-  var vsel = document.getElementById('ppvar'), keys = Object.keys(ent.variants);
-  if(vsel.dataset.mode !== mode){
-    vsel.innerHTML = keys.map(function(k){ return '<option value="'+k+'"'+(k==='base'?' selected':'')+'>'+esc(bk.variants[k]||k)+'</option>'; }).join('');
-    vsel.dataset.mode = mode;
-  }
-  var vk = keys.indexOf(vsel.value) >= 0 ? vsel.value : 'base', V = ent.variants[vk], st = V.stats;
-  document.getElementById('ppstamp').textContent = '기준일 ' + ppD(bk.as_of) + ' · 시작 ' + ppD(bk.start) + ' · 갱신 ' + (bk.updated || '');
-  /* 통계 */
-  var idxRet = function(m){ var a = bk.index[m]||[]; return a.length > 1 ? a[a.length-1][1]/a[0][1]-1 : null; };
-  var seed = bk.seed || 1e7;
-  host.innerHTML = [
-    ['자산', won(st.equity), '시작 ' + won(seed)],
-    ['누적 수익률', ppPct(st.ret), '비용 차감 후'],
-    ['승률', st.wr==null ? '—' : Math.round(st.wr*100)+'%', '청산 ' + st.n + '건 · 평균 ' + ppPct(st.avg)],
-    ['최대 낙폭', ppPct(st.mdd, 1), '일 단위'],
-    ['코스피 · 코스닥', ppPct(idxRet('KOSPI'), 1) + ' · ' + ppPct(idxRet('KOSDAQ'), 1), '같은 기간'],
-    ['규칙', esc(bk.variants[vk]||vk), '기본 비중 ' + Math.round(ent.base_w*100) + '% (2% ÷ ' + (ent.R*100).toFixed(1) + '%) · 보유 ' + ent.hold + '일']
-  ].map(function(x){ return '<div><div class="k">'+x[0]+'</div><div class="v'+(x[0]==='규칙'||x[0]==='코스피 · 코스닥'?' sm':'')+'">'+x[1]+'</div><div class="s">'+x[2]+'</div></div>'; }).join('');
-  /* 곡선: 자산/시드, 코스피·코스닥은 시작일 종가 = 1 */
-  var curve = V.curve || [], dates = curve.map(function(p){ return p[0]; });
-  if(curve.length > 1){
-    var idxC = function(m){
-      var a = bk.index[m]||[], mp = {}; a.forEach(function(r){ mp[r[0]] = r[1]; });
-      var base = null, out = [];
-      dates.forEach(function(d){ var v = mp[d]; if(v == null){ out.push(out.length ? out[out.length-1] : 1); return; } if(base === null) base = v; out.push(v/base); });
-      return out;
-    };
-    var cols = [cssv('--dragon'), cssv('--ink-3'), cssv('--gold')];
-    chart.innerHTML = btLine([curve.map(function(p){ return p[1]/seed; }), idxC('KOSPI'), idxC('KOSDAQ')], [], cols, dates);
-    document.getElementById('pplegend').innerHTML = [[ent.name+' · '+(bk.variants[vk]||vk), cols[0]], ['코스피', cols[1]], ['코스닥', cols[2]]]
-      .map(function(x){ return '<span><i style="background:'+x[1]+'"></i>'+esc(x[0])+'</span>'; }).join('');
-    document.getElementById('ppcap').innerHTML = '<b>자산 곡선</b> — 시드 대비 · 지수는 시작일 종가 = 0%';
-  } else { chart.innerHTML = '<div class="empty">아직 곡선을 그릴 날이 없습니다</div>'; document.getElementById('pplegend').innerHTML = ''; document.getElementById('ppcap').textContent = ''; }
-  /* 월별 결산 */
-  var mo = V.monthly || [];
-  document.getElementById('ppmonth').innerHTML = mo.length ?
-    '<thead><tr><th>월</th><th>수익률</th><th>코스피</th><th>초과</th><th>매매</th><th>승률</th><th>평균</th><th>최고</th><th>최저</th><th>낙폭</th><th>자산</th></tr></thead><tbody>' +
-    mo.map(function(r){ return '<tr><td>'+r.m.slice(0,4)+'.'+r.m.slice(4)+'</td>'+ppCell(r.ret)+ppCell(r.kospi)+ppCell(r.ex)+'<td>'+r.n+'</td><td>'+(r.wr==null?'—':Math.round(r.wr*100)+'%')+'</td>'+ppCell(r.avg)+ppCell(r.best)+ppCell(r.worst)+ppCell(r.mdd,1)+'<td>'+won(r.end)+'</td></tr>'; }).join('') + '</tbody>'
-    : '<tbody><tr><td class="nm">아직 결산할 달이 없습니다</td></tr></tbody>';
-  /* 보유 중 (+ 내일 시가 매수 대기) */
-  var op = V.open || [], pend = ent.pending || [];
-  document.getElementById('ppopen').innerHTML = (op.length || pend.length) ?
-    '<thead><tr><th>종목</th><th>추천일</th><th>진입일</th><th>진입가</th><th>현재</th><th>손익</th><th>비중</th><th>보유</th>'+(mode==='month'?'<th>손절선 −8%</th>':'')+'</tr></thead><tbody>' +
-    op.map(function(r){ return '<tr><td class="nm">'+esc(r.name)+'</td><td>'+ppD(r.pick_day)+'</td><td>'+ppD(r.entry_day)+'</td><td>'+px(r.entry)+'</td><td>'+px(r.last)+'</td>'+ppCell(r.ret)+'<td>'+Math.round(r.w*100)+'%</td><td>'+r.held+'/'+r.hold+'일'+(r.due?' · '+ppD(r.due):'')+'</td>'+(mode==='month'?'<td>'+px(r.stop)+'</td>':'')+'</tr>'; }).join('') +
-    pend.map(function(r){ return '<tr><td class="nm">'+esc(r.name)+'</td><td>'+ppD(r.pick_day)+'</td><td class="why" colspan="'+(mode==='month'?7:6)+'">다음 거래일 시가 매수 대기</td></tr>'; }).join('') + '</tbody>'
-    : '<tbody><tr><td class="nm">보유 없음</td></tr></tbody>';
-  /* 최근 청산 */
-  var cl = (V.closed || []).slice().reverse().slice(0, 12);
-  document.getElementById('ppclosed').innerHTML = cl.length ?
-    '<thead><tr><th>종목</th><th>진입</th><th>청산</th><th>진입가</th><th>청산가</th><th>수익률</th><th>비중</th><th>손익</th><th>사유</th></tr></thead><tbody>' +
-    cl.map(function(r){ return '<tr><td class="nm">'+esc(r.name)+'</td><td>'+ppD(r.entry_day)+'</td><td>'+ppD(r.exit_day)+'</td><td>'+px(r.entry)+'</td><td>'+px(r.exit)+'</td>'+ppCell(r.ret)+'<td>'+Math.round(r.w*100)+'%</td><td class="'+sgn(r.pnl)+'">'+won(r.pnl)+'</td><td class="why">'+esc(r.why||'')+'</td></tr>'; }).join('') + '</tbody>'
-    : '<tbody><tr><td class="nm">아직 청산한 매매가 없습니다</td></tr></tbody>';
-  /* 비중 규칙 비교 */
-  document.getElementById('ppvars').innerHTML =
-    '<thead><tr><th>비중 규칙</th><th>누적</th><th>승률</th><th>평균</th><th>낙폭</th><th>매매</th><th>자산</th></tr></thead><tbody>' +
-    keys.map(function(k){ var x = ent.variants[k].stats; return '<tr'+(k===vk?' class="port"':'')+'><td class="nm">'+esc(bk.variants[k]||k)+'</td>'+ppCell(x.ret)+'<td>'+(x.wr==null?'—':Math.round(x.wr*100)+'%')+'</td>'+ppCell(x.avg)+ppCell(x.mdd,1)+'<td>'+x.n+'</td><td>'+won(x.equity)+'</td></tr>'; }).join('') + '</tbody>';
-  note.innerHTML = '<b>비중 규칙</b> — 2% 룰 고정: 종목당 최대 손실 = 시드 2%, 포지션 = 2% ÷ 손절폭 · 시장 신호 계수: 주의 장세 ×0.67 · 깡토 유닛: (장세 유닛 + 종목 유닛)/5, 성공 +1 실패 −1 · 터틀 ATR: 시드 1% ÷ ATR20'+(mode==='month'?' · −8% 손절: 저가가 닿으면 손절가, 갭이면 시가':'')+'. 체결가는 일봉(종가·시가)이라 실제 애프터장·호가와 다를 수 있습니다.';
-  note.hidden = false;
+function ppIdxRet(bk, m, from, to){
+  var a = bk.index[m]||[], mp = {}; a.forEach(function(r){ mp[r[0]] = r[1]; });
+  var ds = a.map(function(r){ return r[0]; }).filter(function(d){ return (!from || d >= from) && (!to || d <= to); });
+  return ds.length > 1 && mp[ds[0]] ? mp[ds[ds.length-1]]/mp[ds[0]]-1 : null;
 }
-document.getElementById('ppstrat').addEventListener('change', renderPaper);
-document.getElementById('ppvar').addEventListener('change', renderPaper);
+function ppSpark(curve, seed){
+  if(!curve || curve.length < 2) return '';
+  var vals = curve.map(function(p){ return p[1]/seed-1; }), mn = Math.min.apply(null, vals.concat([0])), mx = Math.max.apply(null, vals.concat([0])), rg = (mx-mn)||0.01;
+  var w = 420, h = 48, Y = function(v){ return (4+(mx-v)/rg*(h-8)).toFixed(1); };
+  var pts = vals.map(function(v,i){ return (i/(vals.length-1)*w).toFixed(1)+','+Y(v); }).join(' ');
+  return '<svg class="ppspark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><line x1="0" y1="'+Y(0)+'" x2="'+w+'" y2="'+Y(0)+'" stroke="var(--rule-2)" stroke-dasharray="3 3"/>'+
+    '<polyline points="'+pts+'" fill="none" stroke="var(--dragon)" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>';
+}
+function ppCard(bk, mode){
+  var ent = bk.strats[mode]; if(!ent) return '';
+  var V = ent.variants.base || ent.variants[Object.keys(ent.variants)[0]], st = V.stats, curve = V.curve || [];
+  var from = curve.length ? curve[0][0] : bk.start, to = curve.length ? curve[curve.length-1][0] : bk.as_of;
+  var k = ppIdxRet(bk, 'KOSPI', from, to), diff = (st.ret==null||k==null) ? null : st.ret-k;
+  var rule = mode==='day' ? 'T 종가 → 다음날 시가' : '다음날 시가 → '+ent.hold+'일';
+  var head = '<h4>'+esc(ent.name)+'<small>'+rule+' · '+Math.round(ent.base_w*100)+'%씩</small></h4>';
+  var big = '<div class="big '+sgn(st.ret)+'">'+ppPct(st.ret)+'</div>';
+  var sub = '<div class="sub">코스피 '+ppPct(k)+' · <b class="'+sgn(diff)+'">'+ppPp(diff)+'</b> · 승률 '+(st.wr==null?'—':Math.round(st.wr*100)+'%')+' ('+st.n+'건) · 낙폭 '+ppPct(st.mdd)+'</div>';
+  var op = V.open || [], pend = ent.pending || [], hold = '';
+  if(mode==='day'){
+    hold = op.length ? '<div><span>오늘 종가 매수 → 내일 시가</span><span class="m mut">'+op.length+'종목</span></div><div><span>'+op.map(function(r){ return esc(r.name); }).join(' · ')+'</span><span class="m">각 '+Math.round((op[0].w||0)*100)+'%</span></div>'
+                     : '<div><span class="mut">보유 없음 — 다음 추천부터</span><span></span></div>';
+  } else {
+    hold = op.map(function(r){ return '<div><span>'+esc(r.name)+'</span><span class="m"><span class="'+sgn(r.ret)+'">'+ppPct(r.ret)+'</span> · '+r.held+'/'+r.hold+'일</span></div>'; }).join('') +
+           pend.map(function(r){ return '<div class="mut"><span>'+esc(r.name)+'</span><span class="m">내일 시가 매수</span></div>'; }).join('');
+    if(!hold) hold = '<div><span class="mut">보유 없음</span><span></span></div>';
+  }
+  return '<div class="ppcard" data-mode="'+mode+'">'+head+big+sub+ppSpark(curve, bk.seed||1e7)+'<div class="hold">'+hold+'</div></div>';
+}
+function ppMonthTable(bk){
+  var D = ((bk.strats.day||{}).variants||{}).base, M = ((bk.strats.month||{}).variants||{}).base;
+  var by = {};
+  [['day', D], ['month', M]].forEach(function(x){ ((x[1]||{}).monthly||[]).forEach(function(r){ (by[r.m] = by[r.m] || {})[x[0]] = r; }); });
+  var ms = Object.keys(by).sort().reverse();
+  if(!ms.length) return '<tbody><tr><td class="nm">아직 결산할 달이 없습니다</td></tr></tbody>';
+  function wr(r){ return r ? (r.wr==null ? '—' : Math.round(r.wr*100)+'%')+' ('+r.n+')' : '—'; }
+  return '<thead><tr><th>월</th><th>종가 베팅</th><th>승률</th><th>중기 스윙</th><th>승률</th><th>코스피</th><th>코스닥</th></tr></thead><tbody>' +
+    ms.map(function(m){ var d = by[m].day, mo = by[m].month, any = mo || d;
+      return '<tr><td>'+m.slice(0,4)+'.'+m.slice(4)+'</td>'+ppCell(d?d.ret:null)+'<td>'+wr(d)+'</td>'+ppCell(mo?mo.ret:null)+'<td>'+wr(mo)+'</td>'+ppCell(any.kospi)+ppCell(any.kosdaq)+'</tr>'; }).join('') + '</tbody>';
+}
+function ppClosedTable(V){
+  var cl = ((V||{}).closed || []).slice().reverse().slice(0, 12);
+  if(!cl.length) return '<div class="empty">아직 청산한 매매가 없습니다</div>';
+  return '<div class="scroll"><table class="bttab"><thead><tr><th>종목</th><th>진입</th><th>청산</th><th>진입가</th><th>청산가</th><th>수익률</th><th>비중</th><th>손익</th><th>사유</th></tr></thead><tbody>' +
+    cl.map(function(r){ return '<tr><td class="nm">'+esc(r.name)+'</td><td>'+ppD(r.entry_day)+'</td><td>'+ppD(r.exit_day)+'</td><td>'+px(r.entry)+'</td><td>'+px(r.exit)+'</td>'+ppCell(r.ret,2)+'<td>'+Math.round(r.w*100)+'%</td><td class="'+sgn(r.pnl)+'">'+won(r.pnl)+'</td><td class="why">'+esc(r.why||'')+'</td></tr>'; }).join('') + '</tbody></table></div>';
+}
+function ppVarTable(bk, ent){
+  var keys = Object.keys(ent.variants);
+  return '<div class="scroll"><table class="bttab"><thead><tr><th>비중 규칙</th><th>누적</th><th>승률</th><th>평균</th><th>낙폭</th><th>매매</th><th>자산</th></tr></thead><tbody>' +
+    keys.map(function(k){ var x = ent.variants[k].stats; return '<tr'+(k==='base'?' class="port"':'')+'><td class="nm">'+esc(bk.variants[k]||k)+'</td>'+ppCell(x.ret,2)+'<td>'+(x.wr==null?'—':Math.round(x.wr*100)+'%')+'</td>'+ppCell(x.avg,2)+ppCell(x.mdd)+'<td>'+x.n+'</td><td>'+won(x.equity)+'</td></tr>'; }).join('') + '</tbody></table></div>';
+}
+function renderPaper(){
+  var cards = document.getElementById('ppcards'); if(!cards) return;
+  var note = document.getElementById('ppnote'), fold = document.getElementById('ppfold'), mo = document.getElementById('ppmonth'), stamp = document.getElementById('ppstamp');
+  function clear(msg){ cards.innerHTML = ''; mo.innerHTML = ''; fold.innerHTML = ''; stamp.textContent = ''; note.innerHTML = msg || ''; note.hidden = !msg; }
+  if(PAPER.loading){ clear('기록을 받아오는 중…'); return; }
+  var bk = PAPER.book;
+  if(!bk || !bk.strats){ clear(esc(PAPER.err || '아직 기록이 없습니다')); return; }
+  note.hidden = true; note.innerHTML = '';
+  cards.innerHTML = ['day','month'].map(function(m){ return ppCard(bk, m); }).join('');
+  stamp.textContent = ppD(bk.start)+' 시작 · 기준일 '+ppD(bk.as_of)+' · 가상 계좌 각 '+won(bk.seed||1e7)+'원';
+  mo.innerHTML = ppMonthTable(bk);
+  var order = ['day','month'].filter(function(m){ return bk.strats[m]; });
+  fold.innerHTML =
+    '<details><summary>최근 청산</summary>'+order.map(function(m){ return '<h5>'+esc(bk.strats[m].name)+'</h5>'+ppClosedTable(bk.strats[m].variants.base); }).join('')+'</details>' +
+    '<details><summary>비중 규칙 비교 <span class="mut">— 같은 종목, 비중만 다르게</span></summary>'+order.map(function(m){ return '<h5>'+esc(bk.strats[m].name)+'</h5>'+ppVarTable(bk, bk.strats[m]); }).join('') +
+    '<div class="mut" style="margin-top:4px">2% 룰 고정: 종목당 최대 손실 = 시드 2%, 포지션 = 2% ÷ 손절폭 · 시장 신호 계수: 주의 장세 ×0.67 · 깡토 유닛: (장세 유닛 + 종목 유닛)/5, 성공 +1 실패 −1 · 터틀 ATR: 시드 1% ÷ ATR20 · −8% 손절: 저가가 닿으면 손절가, 갭이면 시가</div></details>' +
+    '<div style="margin-top:8px">체결은 일봉 시가·종가(실제 애프터장·호가와 다를 수 있음) · 비용 0.18% · 매일 저녁 갱신</div>';
+}
 
 var FILL_TXT = {
   after: '매수는 신호일(T) 종가 — 애프터장(NXT 15:30~20:00 · KRX 시간외) · 매도는 T+1 시가. 애프터장 체결가는 종가와 다를 수 있습니다',
