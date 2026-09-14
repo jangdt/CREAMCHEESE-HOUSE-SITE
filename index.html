@@ -493,10 +493,15 @@ input[type=range]:focus-visible{outline:2px solid var(--ink); outline-offset:2px
 .ppfold{margin-top:30px; font-size:12.5px; color:var(--ink-3)}
 .ppfold details{margin-top:0; padding:12px 0; border-top:1px solid var(--rule)}
 .ppfold details:last-of-type{border-bottom:1px solid var(--rule)}
-.ppfold summary{cursor:pointer; color:var(--ink); list-style:none; user-select:none; font-weight:700; font-size:15px}
+.ppfold summary{cursor:pointer; color:var(--ink); list-style:none; user-select:none; font-weight:700; font-size:15px; display:flex; align-items:center; gap:12px}
+.ppfold summary::-webkit-details-marker{display:none}
 .ppfold summary .mut{font-weight:400; font-size:12.5px; color:var(--ink-3)}
-.ppfold summary::before{content:"＋ "; color:var(--ink-3)}
-.ppfold details[open] summary::before{content:"－ "}
+/* ＋/－ 는 종목 카드 단락(.ws-x)과 같은 네모 버튼 — 제목 뒤에 (09-14 사용자) */
+.ppfold summary::after{content:""; flex:0 0 auto; width:24px; height:24px; border:1px solid var(--rule-2); border-radius:3px; background:var(--card);
+  background-image:linear-gradient(currentColor,currentColor),linear-gradient(currentColor,currentColor); background-repeat:no-repeat;
+  background-size:12px 2px,2px 12px; background-position:center; color:var(--ink-3)}
+.ppfold summary:hover::after{color:var(--ink)}
+.ppfold details[open] summary::after{background-size:12px 2px,0 0; color:var(--dragon); border-color:var(--dragon)}
 .ppfold .scroll{margin:6px 0 10px}
 .ppfold h5{font-size:12px; font-weight:600; color:var(--ink-2); margin:8px 0 4px}
 .pprule{max-width:76ch; color:var(--ink-2); font-size:13px; line-height:1.65; padding:4px 0 6px}
@@ -4873,11 +4878,13 @@ function ppCard(bk, mode){
   var ent = bk.strats[mode]; if(!ent) return '';
   var V = ent.variants.base || ent.variants[Object.keys(ent.variants)[0]], st = V.stats, curve = V.curve || [];
   var from = curve.length ? curve[0][0] : bk.start, to = curve.length ? curve[curve.length-1][0] : bk.as_of;
-  var k = ppIdxRet(bk, 'KOSPI', from, to), diff = (st.ret==null||k==null) ? null : st.ret-k;
+  /* 잣대 = 같은 돈·같은 날짜로 대상 종목 평균을 샀다면(bench_ret). 옛 장부(bench 없음)면 코스피 종가 비로 대신 */
+  var hasB = st.bench_ret != null, k = hasB ? st.bench_ret : ppIdxRet(bk, 'KOSPI', from, to), diff = (st.ret==null||k==null) ? null : st.ret-k;
   var rule = mode==='day' ? 'T 종가에 사서 다음날 시가에 판다 · 종목당 '+Math.round(ent.base_w*100)+'%' : '추천 다음날 시가에 사서 '+ent.hold+'거래일 뒤 종가에 판다 · 종목당 '+Math.round(ent.base_w*100)+'%';
   var head = '<h4>'+esc(ent.name)+'<small title="'+esc(rule)+'">'+(mode==='day' ? '하룻밤' : ent.hold+'일 보유')+' · '+Math.round(ent.base_w*100)+'%씩</small></h4>';
-  var row1 = '<div class="row1"><span class="big '+sgn(st.ret)+'">'+ppPct(st.ret)+'</span><span class="vs '+sgn(diff)+'"><small>코스피 대비</small>'+ppPp(diff)+'</span></div>';
-  var sub = '<div class="sub">승률 <b>'+(st.wr==null?'—':Math.round(st.wr*100)+'%')+'</b> · '+st.n+'건 · 낙폭 <b>'+ppPct(st.mdd)+'</b></div>';
+  var vsTip = hasB ? '같은 돈으로 같은 날짜에 대상 종목 '+'전체 평균을 샀다면 '+ppPct(k)+' — 그 차이' : '코스피 같은 기간 '+ppPct(k)+' 대비';
+  var row1 = '<div class="row1"><span class="big '+sgn(st.ret)+'">'+ppPct(st.ret)+'</span><span class="vs '+sgn(diff)+'" title="'+esc(vsTip)+'"><small>'+(hasB ? '유니버스 대비' : '코스피 대비')+'</small>'+ppPp(diff)+'</span></div>';
+  var sub = '<div class="sub">승률 <b>'+(st.wr==null?'—':Math.round(st.wr*100)+'%')+'</b>'+(st.ex_wr!=null ? ' · 초과 승률 <b>'+Math.round(st.ex_wr*100)+'%</b>' : '')+' · '+st.n+'건 · 낙폭 <b>'+ppPct(st.mdd)+'</b></div>';
   var op = V.open || [], pend = ent.pending || [], hold = '';
   if(mode==='day'){
     hold = op.length ? '<div><span>오늘 종가 매수 → 내일 시가</span><span class="m mut">'+op.length+'종목</span></div><div><span>'+op.map(function(r){ return esc(r.name); }).join(' · ')+'</span><span class="m">각 '+Math.round((op[0].w||0)*100)+'%</span></div>'
@@ -4895,7 +4902,7 @@ function ppMonthTable(bk){
   [['day', D], ['month', M]].forEach(function(x){ ((x[1]||{}).monthly||[]).forEach(function(r){ (by[r.m] = by[r.m] || {})[x[0]] = r; }); });
   var ms = Object.keys(by).sort().reverse();
   if(!ms.length) return '<tbody><tr><td class="nm">아직 결산할 달이 없습니다</td></tr></tbody>';
-  function cell(r){ return r ? '<td class="'+sgn(r.ret)+'">'+ppPct(r.ret)+(r.n ? ' <span class="why">'+(r.wr==null?'':Math.round(r.wr*100)+'% · ')+r.n+'건</span>' : '')+'</td>' : '<td>—</td>'; }
+  function cell(r){ return r ? '<td class="'+sgn(r.ret)+'">'+ppPct(r.ret)+(r.n ? ' <span class="why">'+(r.wr==null?'':Math.round(r.wr*100)+'% · ')+r.n+'건'+(r.ex!=null ? ' · 초과 '+ppPp(r.ex) : '')+'</span>' : '')+'</td>' : '<td>—</td>'; }
   return '<thead><tr><th>월</th><th>종가 베팅</th><th>중기 스윙</th><th>코스피</th></tr></thead><tbody>' +
     ms.map(function(m){ var d = by[m].day, mo = by[m].month, any = mo || d;
       return '<tr><td>'+m.slice(0,4)+'.'+m.slice(4)+'</td>'+cell(d)+cell(mo)+ppCell(any.kospi)+'</tr>'; }).join('') + '</tbody>';
@@ -4927,6 +4934,7 @@ function renderPaper(){
       '<p><b>얼마씩</b> 한 종목에서 잃어도 시드의 2%를 넘지 않게 — 포지션 = 2% ÷ 손절폭. 중기 스윙은 손절폭 8%라 종목당 '+wM+'%, 종가 베팅은 밤사이 갭 하위 5%를 6.7%로 잡아 종목당 '+wD+'%. 3종목이면 '+(3*wM)+'~'+(3*wD)+'%가 들어가고 나머지는 현금.</p>' +
       '<p><b>언제 사고 파나</b> 종가 베팅은 추천일 종가에 사서 다음날 시가에 판다. 중기 스윙은 추천 다음날 시가에 사서 20거래일 뒤 종가에 판다. 손절·목표가 없음(백테스트에서 손절 없음이 최선). 비용은 왕복 0.18%.</p>' +
       '<p><b>병행 비교</b> 같은 종목을 비중 규칙만 바꿔 네 가지로 더 돌려 보고 있다(시장 신호 계수 · 연승 가감 · 변동성 비중 · 중기 −8% 손절). 몇 달 뒤 승률 → 시장 초과 → 낙폭 순으로 기본 규칙을 고른다.</p>' +
+      '<p><b>잣대</b> "시장을 이겼나"는 코스피가 아니라 <b>같은 돈으로 같은 날짜에 대상 종목 전체 평균을 샀다면</b>과 비교한다(유니버스 대비). 종가 베팅은 하룻밤 전략이라 월간 지수와 비교하면 뜻이 없다.</p>' +
       '<p class="mut">한 줄로: 추천 3종목을 2% 룰 비중으로 정해진 날짜에 기계적으로 사고팔아, 실제로 시장을 이겼는지 매달 결산한다.</p>' +
     '</div></details>' +
     '<div style="margin-top:18px">체결 일봉 시가·종가 · 비용 0.18% · 매일 저녁 갱신</div>';
