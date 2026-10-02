@@ -1,0 +1,13 @@
+{
+  "issues": [
+    {
+      "id": "2026-10-03-securities",
+      "sector": "증권",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "증권주는 이익 정점을 지나는 중이다",
+      "conf": 65,
+      "pdf": "research/2026-10-03-securities.pdf"
+    }
+  ]
+}
