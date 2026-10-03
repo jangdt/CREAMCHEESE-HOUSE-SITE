@@ -8,6 +8,177 @@
       "title": "증권주는 이익 정점을 지나는 중이다",
       "conf": 65,
       "pdf": "research/2026-10-03-securities.pdf"
+    },
+    {
+      "id": "2026-10-03-semiconductor",
+      "sector": "반도체",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "반도체는 메모리부터, 장비는 실적을 기다리자",
+      "conf": 80,
+      "pdf": "research/2026-10-03-semiconductor.pdf"
+    },
+    {
+      "id": "2026-10-03-bank",
+      "sector": "은행",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "은행은 환원이 버텨도 아직 추세 전환이 아니다",
+      "conf": 80,
+      "pdf": "research/2026-10-03-bank.pdf"
+    },
+    {
+      "id": "2026-10-03-auto",
+      "sector": "자동차",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "자동차는 기아부터 보되 반등은 아직 기다리자",
+      "conf": 80,
+      "pdf": "research/2026-10-03-auto.pdf"
+    },
+    {
+      "id": "2026-10-03-electronic-equipment",
+      "sector": "전자장비",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "전자장비는 대덕전자만 선별하고 추격을 피한다",
+      "conf": 65,
+      "pdf": "research/2026-10-03-electronic-equipment.pdf"
+    },
+    {
+      "id": "2026-10-03-electrical-products",
+      "sector": "전기제품",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "전기제품 급등을 배터리 회복으로 읽지 않는다",
+      "conf": 70,
+      "pdf": "research/2026-10-03-electrical-products.pdf"
+    },
+    {
+      "id": "2026-10-03-electrical-equipment",
+      "sector": "전기장비",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "전기장비는 산일전기만 선별한다",
+      "conf": 65,
+      "pdf": "research/2026-10-03-electrical-equipment.pdf"
+    },
+    {
+      "id": "2026-10-03-defense",
+      "sector": "방산",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "방산은 반등했지만 업종 전체 추격은 이르다",
+      "conf": 80,
+      "pdf": "research/2026-10-03-defense.pdf"
+    },
+    {
+      "id": "2026-10-03-shipbuilding",
+      "sector": "조선",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "조선은 이익 회복보다 주가 회복이 늦다",
+      "conf": 80,
+      "pdf": "research/2026-10-03-shipbuilding.pdf"
+    },
+    {
+      "id": "2026-10-03-machinery",
+      "sector": "기계",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "기계 반등은 로보티즈 한 곳에 쏠렸다",
+      "conf": 85,
+      "pdf": "research/2026-10-03-machinery.pdf"
+    },
+    {
+      "id": "2026-10-03-medical-devices",
+      "sector": "의료기기",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "의료기기는 매출보다 마진 회복이 먼저다",
+      "conf": 70,
+      "pdf": "research/2026-10-03-medical-devices.pdf"
+    },
+    {
+      "id": "2026-10-03-refining",
+      "sector": "정유",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "정유는 S-Oil을 우선하고 급등과 이익을 가른다",
+      "conf": 60,
+      "pdf": "research/2026-10-03-refining.pdf"
+    },
+    {
+      "id": "2026-10-03-chemicals",
+      "sector": "화학",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "화학 반등은 인정하되 업종 회복 판정은 거부한다",
+      "conf": 75,
+      "pdf": "research/2026-10-03-chemicals.pdf"
+    },
+    {
+      "id": "2026-10-03-construction",
+      "sector": "건설",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "건설은 수주보다 현금 회수로 골라야 한다",
+      "conf": 70,
+      "pdf": "research/2026-10-03-construction.pdf"
+    },
+    {
+      "id": "2026-10-03-insurance",
+      "sector": "보험",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "보험은 이익 증가보다 이익의 질을 먼저 본다",
+      "conf": 70,
+      "pdf": "research/2026-10-03-insurance.pdf"
+    },
+    {
+      "id": "2026-10-03-conglomerate",
+      "sector": "복합기업",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "복합기업은 한화부터 관찰하고 두산 추격은 제외한다",
+      "conf": 65,
+      "pdf": "research/2026-10-03-conglomerate.pdf"
+    },
+    {
+      "id": "2026-10-03-it-services",
+      "sector": "IT서비스",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "IT서비스는 LG CNS부터, 이익 회복 전엔 관찰",
+      "conf": 80,
+      "pdf": "research/2026-10-03-it-services.pdf"
+    },
+    {
+      "id": "2026-10-03-telecom",
+      "sector": "통신",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "통신은 LG유플러스부터, 반등은 아직 기다리자",
+      "conf": 80,
+      "pdf": "research/2026-10-03-telecom.pdf"
+    },
+    {
+      "id": "2026-10-03-bio",
+      "sector": "바이오",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "바이오 반등은 아직 업종 회복이 아니다",
+      "conf": 85,
+      "pdf": "research/2026-10-03-bio.pdf"
+    },
+    {
+      "id": "2026-10-03-pharma",
+      "sector": "제약",
+      "date": "2026-10-03",
+      "pub_at": "2026-10-03T06:00:00+09:00",
+      "title": "제약 반등은 좁고 한미약품만 장기선 위다",
+      "conf": 85,
+      "pdf": "research/2026-10-03-pharma.pdf"
     }
   ]
 }
