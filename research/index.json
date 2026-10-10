@@ -179,6 +179,186 @@
       "title": "제약 반등은 좁고 한미약품만 장기선 위다",
       "conf": 85,
       "pdf": "research/2026-10-03-pharma.pdf"
+    },
+    {
+      "id": "2026-10-10-auto",
+      "sector": "자동차",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "자동차는 기다리되 타이어는 연구 후보로 봐요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-auto.pdf"
+    },
+    {
+      "id": "2026-10-10-bank",
+      "sector": "은행",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "은행은 KB금융부터 회복을 기다려요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-bank.pdf"
+    },
+    {
+      "id": "2026-10-10-bio",
+      "sector": "바이오",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "바이오는 계약과 판매 위험부터 걷어내야 해요",
+      "conf": 75,
+      "pdf": "research/2026-10-10-bio.pdf"
+    },
+    {
+      "id": "2026-10-10-chemicals",
+      "sector": "화학",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "화학 반등은 인정하되 이익 회복을 기다려요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-chemicals.pdf"
+    },
+    {
+      "id": "2026-10-10-conglomerate",
+      "sector": "복합기업",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "한화는 제외하고 두산 회복만 지켜봐요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-conglomerate.pdf"
+    },
+    {
+      "id": "2026-10-10-construction",
+      "sector": "건설",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "건설은 관찰하고 삼성E&A만 후보로 봐요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-construction.pdf"
+    },
+    {
+      "id": "2026-10-10-defense",
+      "sector": "방산",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "방산 전체보다 이익이 버티는 회사를 가려 봐요",
+      "conf": 75,
+      "pdf": "research/2026-10-10-defense.pdf"
+    },
+    {
+      "id": "2026-10-10-electrical-equipment",
+      "sector": "전기장비",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "전기장비는 산일전기만 연구 후보로 남겨요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-electrical-equipment.pdf"
+    },
+    {
+      "id": "2026-10-10-electrical-products",
+      "sector": "전기제품",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "배터리 반등을 인정하고 LG에너지솔루션부터 봐요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-electrical-products.pdf"
+    },
+    {
+      "id": "2026-10-10-electronic-equipment",
+      "sector": "전자장비",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "기판 기대는 강해도 대덕전자만 선별해요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-electronic-equipment.pdf"
+    },
+    {
+      "id": "2026-10-10-insurance",
+      "sector": "보험",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "보험 전체보다 DB손해보험 회복을 먼저 봐요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-insurance.pdf"
+    },
+    {
+      "id": "2026-10-10-it-services",
+      "sector": "IT서비스",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "IT서비스는 이익과 가격 회복 전엔 제외해요",
+      "conf": 75,
+      "pdf": "research/2026-10-10-it-services.pdf"
+    },
+    {
+      "id": "2026-10-10-machinery",
+      "sector": "기계",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "기계는 관찰하고 HD건설기계부터 연구해요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-machinery.pdf"
+    },
+    {
+      "id": "2026-10-10-medical-devices",
+      "sector": "의료기기",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "HLB만 오른 반등이라 파마리서치부터 관찰해요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-medical-devices.pdf"
+    },
+    {
+      "id": "2026-10-10-pharma",
+      "sector": "제약",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "제약은 신약 호재보다 자금 이탈이 더 무거워요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-pharma.pdf"
+    },
+    {
+      "id": "2026-10-10-refining",
+      "sector": "정유",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "기관이 받치는 정유 두 회사를 연구 후보로 봐요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-refining.pdf"
+    },
+    {
+      "id": "2026-10-10-securities",
+      "sector": "증권",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "증권주는 거래 증가보다 가격 회복을 기다려요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-securities.pdf"
+    },
+    {
+      "id": "2026-10-10-semiconductor",
+      "sector": "반도체",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "반도체는 메모리부터 연구 후보로 봐요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-semiconductor.pdf"
+    },
+    {
+      "id": "2026-10-10-shipbuilding",
+      "sector": "조선",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "조선은 HD한국조선해양부터 관찰해요",
+      "conf": 60,
+      "pdf": "research/2026-10-10-shipbuilding.pdf"
+    },
+    {
+      "id": "2026-10-10-telecom",
+      "sector": "통신",
+      "date": "2026-10-10",
+      "pub_at": "2026-10-10T06:00:00+09:00",
+      "title": "통신은 관찰하되 KT부터 연구 후보로 봐요",
+      "conf": 70,
+      "pdf": "research/2026-10-10-telecom.pdf"
     }
   ]
 }
